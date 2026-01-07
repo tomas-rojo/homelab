@@ -3,6 +3,8 @@ name: Terraform Apply
 on:
   push:
     branches: [main]
+    paths:
+      - "cluster/**/*.tf"
 
 jobs:
   terraform:
