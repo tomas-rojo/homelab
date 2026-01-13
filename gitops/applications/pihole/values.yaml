@@ -1,5 +1,0 @@
-serviceWeb:
-  type: LoadBalancer
-  annotations:
-    service.beta.kubernetes.io/metal-lb: "true"
-    metallb.universe.tf/address-pool: public-pool
