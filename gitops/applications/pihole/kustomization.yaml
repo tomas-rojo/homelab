@@ -9,6 +9,3 @@ helmCharts:
     releaseName: pihole
     valuesFile: values.yaml
     namespace: pihole
-
-resources:
-  - service.yaml
