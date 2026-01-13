@@ -10,6 +10,10 @@ spec:
         elements:
           - name: metallb
             namespace: metallb-system
+          - name: traefik-crds
+            namespace: traefik
+          - name: traefik
+            namespace: traefik
   template:
     metadata:
       name: '{{.name}}'
