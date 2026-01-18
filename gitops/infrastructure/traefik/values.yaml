@@ -49,11 +49,11 @@ dashboard:
   enabled: true
   ingress:
     enabled: true
-    path: /dashboard/
-    pathType: Prefix
-    annotations:
-      kubernetes.io/ingress.class: traefik
-    hosts:
-    - host: "traefik.internal" #traefik.example.com  # Change to your desired host
-      paths:
-      - /
+    # path: /dashboard/
+    # pathType: Prefix
+    # annotations:
+    #   kubernetes.io/ingress.class: traefik
+    # hosts:
+    # - host: "traefik.internal" #traefik.example.com  # Change to your desired host
+    #   paths:
+    #   - /
