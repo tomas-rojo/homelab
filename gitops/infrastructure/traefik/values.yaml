@@ -54,6 +54,6 @@ dashboard:
     annotations:
       kubernetes.io/ingress.class: traefik
     hosts:
-    - host: "*" #traefik.example.com  # Change to your desired host
+    - host: "traefik.internal" #traefik.example.com  # Change to your desired host
       paths:
       - /
