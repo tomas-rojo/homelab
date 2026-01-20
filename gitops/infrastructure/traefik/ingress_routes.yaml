@@ -23,19 +23,19 @@ spec:
   tls:
     certResolver: default
 ---
-# apiVersion: traefik.io/v1alpha1
-# kind: IngressRoute
-# metadata:
-#   name: pihole-dashboard
-#   namespace: pihole
-# spec:
-#   entryPoints:
-#   - websecure
-#   routes:
-#   - kind: Rule
-#     match: Host(`pihole.internal`)
-#     services:
-#     - name: pihole-web
-#       port: 80
-#   tls:
-#     certResolver: default
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: pihole-dashboard
+  namespace: pihole
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`pihole.internal`)
+    services:
+    - name: pihole-web
+      port: 80
+  tls:
+    certResolver: default
