@@ -16,6 +16,8 @@ spec:
             namespace: traefik
           - name: cnpg
             namespace: cnpg-system
+          - name: sealed-secrets
+            namespace: kube-system
   template:
     metadata:
       name: '{{.name}}'
