@@ -1,1 +1,2 @@
-# TODO
+preUpgradeChecker:
+  jobEnabled: false # Disable this setting when installing Longhorn using Argo CD or other GitOps solutions.
