@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
   # Resource files
-  # - dashboard_route.yaml
+  - ingress_routes.yaml
 
 helmCharts:
   - name: traefik
