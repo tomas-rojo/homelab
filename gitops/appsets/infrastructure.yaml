@@ -18,6 +18,8 @@ spec:
             namespace: cnpg-system
           - name: sealed-secrets
             namespace: kube-system
+          - name: longhorn
+            namespace: longhorn-system
   template:
     metadata:
       name: '{{.name}}'
