@@ -39,3 +39,20 @@ spec:
       port: 80
   tls:
     certResolver: default
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: longhorn-dashboard
+  namespace: longhorn-system
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`longhorn.internal`)
+    services:
+    - name: longhorn-frontend
+      port: 80
+  tls:
+    certResolver: default
