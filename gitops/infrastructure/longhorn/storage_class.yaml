@@ -1,0 +1,11 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: longhorn-immich
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true   # Allows resizing the PVC without downtime
+reclaimPolicy: Retain        # Keeps the volume if the PVC is deleted (safer for photos)
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  numberOfReplicas: "2"      # Adjust to match your node count (3 is default)
+  staleReplicaTimeout: "30" 
