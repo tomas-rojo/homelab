@@ -5,7 +5,7 @@ metadata:
 provisioner: driver.longhorn.io
 allowVolumeExpansion: true   # Allows resizing the PVC without downtime
 reclaimPolicy: Retain        # Keeps the volume if the PVC is deleted (safer for photos)
-volumeBindingMode: WaitForFirstConsumer
+volumeBindingMode: Immediate
 parameters:
   numberOfReplicas: "2"      # Adjust to match your node count (3 is default)
   staleReplicaTimeout: "30" 
