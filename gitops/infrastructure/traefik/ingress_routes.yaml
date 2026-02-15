@@ -56,3 +56,20 @@ spec:
       port: 80
   tls:
     certResolver: default
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: immich-dashboard
+  namespace: immich
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`immich.internal`)
+    services:
+    - name: immich-server
+      port: 2283
+  tls:
+    certResolver: default
