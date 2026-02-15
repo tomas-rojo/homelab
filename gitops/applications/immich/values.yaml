@@ -46,6 +46,11 @@ server:
   ingress:
     main:
       enabled: false
+  service:
+    main:
+      type: LoadBalancer
+      annotations:
+        metallb.universe.tf/address-pool: public-pool
 
 machine-learning:
   enabled: true
