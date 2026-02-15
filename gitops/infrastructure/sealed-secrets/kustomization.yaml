@@ -3,6 +3,9 @@ kind: Kustomization
 
 namespace: kube-system
 
+resources:
+  - https://raw.githubusercontent.com/bitnami-labs/sealed-secrets/main/helm/sealed-secrets/crds/bitnami.com_sealedsecrets.yaml
+
 helmCharts:
   - name: sealed-secrets
     version: 2.15.0
