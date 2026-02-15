@@ -3,3 +3,6 @@ preUpgradeChecker:
 
 longhornUI:
   replicas: 1
+
+defaultSettings:
+  defaultReplicaCount: 2
