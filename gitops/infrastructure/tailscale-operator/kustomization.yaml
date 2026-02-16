@@ -3,6 +3,9 @@ kind: Kustomization
 
 namespace: tailscale
 
+resources:
+  - auth_key.yaml
+
 helmCharts:
   - name: tailscale-operator
     version: 1.94.2
