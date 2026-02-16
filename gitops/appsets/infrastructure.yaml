@@ -20,6 +20,8 @@ spec:
             namespace: kube-system
           - name: longhorn
             namespace: longhorn-system
+          - name: tailscale-operator
+            namespace: tailscale
   template:
     metadata:
       name: '{{.name}}'
