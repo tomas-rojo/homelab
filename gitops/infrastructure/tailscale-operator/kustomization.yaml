@@ -5,7 +5,7 @@ namespace: kube-system
 
 helmCharts:
   - name: tailscale
-    version: 1.94.2
+    version: v1.94.2
     repo: "https://pkgs.tailscale.com/helmcharts"
     releaseName: tailscale
     valuesFile: values.yaml
