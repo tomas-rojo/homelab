@@ -22,6 +22,8 @@ spec:
             namespace: longhorn-system
           - name: tailscale-operator
             namespace: tailscale
+          - name: envoy-gateway
+            namespace: envoy-gateway-system
   template:
     metadata:
       name: '{{.name}}'
