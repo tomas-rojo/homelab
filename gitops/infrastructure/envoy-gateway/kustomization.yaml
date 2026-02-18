@@ -2,8 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 helmCharts:
-  - name: eg
+  - name: gateway-helm
     version: v1.7.0
-    repo: "oci://docker.io/envoyproxy/gateway-helm"
-    releaseName: eg
+    repo: "https://charts.envoyproxy.io"
+    releaseName: envoy-gateway
     valuesFile: values.yaml
