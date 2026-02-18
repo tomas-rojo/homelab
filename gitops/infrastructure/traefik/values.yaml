@@ -46,5 +46,5 @@ service:
   annotations:
     metallb.universe.tf/address-pool: public-pool
     tailscale.com/expose: "true"
-    tailscale.com/hostname: k8s-
+    tailscale.com/hostname: k8s
   type: LoadBalancer
