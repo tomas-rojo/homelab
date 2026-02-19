@@ -4,8 +4,8 @@ kind: Kustomization
 namespace: envoy-gateway-system
 
 helmCharts:
-  - name: envoy-gateway
+  - name: gateway-helm
     version: v1.7.0
     repo: "oci://docker.io/envoyproxy"
-    releaseName: gateway-helm
+    releaseName: envoy-gateway
     valuesFile: values.yaml
