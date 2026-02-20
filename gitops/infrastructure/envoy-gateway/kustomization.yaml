@@ -9,3 +9,12 @@ helmCharts:
     repo: oci://docker.io/envoyproxy
     releaseName: envoy-gateway
     valuesFile: values.yaml
+
+patches:
+  - target:
+      kind: MutatingWebhookConfiguration
+      name: envoy-gateway-topology-injector.envoy-gateway-system
+    patch: |-
+      - op: add
+        path: /metadata/annotations/helm.sh~1hook-weight
+        value: "-1"
