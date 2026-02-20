@@ -9,20 +9,3 @@ helmCharts:
     repo: oci://docker.io/envoyproxy
     releaseName: envoy-gateway
     valuesFile: values.yaml
-
-patches:
-  - target:
-      kind: MutatingWebhookConfiguration
-      name: envoy-gateway-topology-injector.envoy-gateway-system
-    patch: |-
-      - op: add
-        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
-        value: "1"
-
-  - target:
-      kind: Deployment
-      name: envoy-gateway
-    patch: |-
-      - op: add
-        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
-        value: "2"
