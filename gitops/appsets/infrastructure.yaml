@@ -1,30 +1,59 @@
-apiVersion: apps.open-cluster-management.io/v1
+apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   name: infrastructure
+  namespace: argocd
 spec:
+  goTemplate: true
   generators:
-    - clusters:
-        clusterNames:
-          - "{{ .cluster.name }}"
+    - list:
+        elements:
+          - name: metallb
+            namespace: metallb-system
+          - name: traefik-crds
+            namespace: traefik
+          - name: traefik
+            namespace: traefik
+          - name: cnpg
+            namespace: cnpg-system
+          - name: sealed-secrets
+            namespace: kube-system
+          - name: longhorn
+            namespace: longhorn-system
+          - name: tailscale-operator
+            namespace: tailscale
+          - name: envoy-gateway
+            namespace: envoy-gateway-system
   template:
     metadata:
-      name: "infrastructure-{{ .cluster.name }}"
+      name: '{{.name}}'
+      namespace: argocd
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
     spec:
-      patch: |
-        # Patch configuration for cnpg and envoy-gateway
-        apiVersion: apps.open-cluster-management.io/v1
-        kind: ApplicationSet
-        metadata:
-          name: infrastructure
-        spec:
-          serverSideApply: true
-          templatePatch:
-            apiVersion: apps.open-cluster-management.io/v1
-            kind: ApplicationSet
-            metadata:
-              name: envoy-gateway
-              serverSideApply: true
-            # Further configuration...
-        
-        # The complete configuration should ensure both cnpg and envoy-gateway are included
+      project: infrastructure
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        retry:
+          limit: 3
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m
+      source:
+        repoURL: https://github.com/tomas-rojo/homelab.git
+        targetRevision: HEAD
+        path: gitops/infrastructure/{{.name}}
+  templatePatch: |
+    spec:
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+          {{- if or (eq .name "cnpg") (eq .name "envoy-gateway") }}
+          - ServerSideApply=true
+          {{- end }}
