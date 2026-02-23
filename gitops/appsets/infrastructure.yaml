@@ -56,6 +56,6 @@ spec:
       syncPolicy:
         syncOptions:
           - CreateNamespace=true
-          {{- if or (eq .name "cnpg") (eq .name "envoy-gateway") }}
+          {{- if or (eq .name "cnpg") (eq .name "envoy-gateway") (eq .name "envoy-gateway-crds") }}
           - ServerSideApply=true
           {{- end }}
