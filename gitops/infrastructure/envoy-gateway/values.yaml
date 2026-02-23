@@ -1,7 +1,7 @@
-service:
-  annotations:
-    metallb.universe.tf/address-pool: public-pool
-  type: LoadBalancer
+# service:
+#   annotations:
+#     metallb.universe.tf/address-pool: public-pool
+#   type: LoadBalancer
 
 topologyInjector:
   enabled: false # Disabled because initial certgen job was failing 
