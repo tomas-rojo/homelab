@@ -5,3 +5,10 @@
 
 topologyInjector:
   enabled: false # Disabled because initial certgen job was failing 
+
+crds:
+  gatewayAPI:
+    enabled: true
+    channel: standard
+  envoyGateway:
+    enabled: true
