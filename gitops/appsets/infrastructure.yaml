@@ -24,6 +24,8 @@ spec:
             namespace: tailscale
           - name: envoy-gateway
             namespace: envoy-gateway-system
+          - name: envoy-gateway-crds
+            namespace: envoy-gateway-system
   template:
     metadata:
       name: '{{.name}}'
