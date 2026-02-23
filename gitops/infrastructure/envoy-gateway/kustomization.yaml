@@ -9,3 +9,8 @@ helmCharts:
     repo: oci://docker.io/envoyproxy
     releaseName: envoy-gateway
     valuesFile: values.yaml
+
+resources:
+  - 01-gatewayclass.yaml
+  - 02-gateway.yaml
+  - 03-envoyproxy.yaml
