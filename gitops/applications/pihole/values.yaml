@@ -12,6 +12,6 @@ extraVolumes:
 
 extraVolumeMounts:
   local-dns:
-    mountPath: /etc/pihole/custom.list
+    mountPath: /etc/pihole/hosts/custom.list
     subPath: custom.list
     readOnly: true
