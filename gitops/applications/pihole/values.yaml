@@ -5,7 +5,14 @@ serviceDns:
     metallb.universe.tf/address-pool: public-pool
     metallb.universe.tf/allow-shared-ip: pihole-dns
 
+# values.yaml or your Helm values overlay
+extraVolumes:
+  local-dns:
+    configMap:
+      name: pihole-local-dns
+
 extraVolumeMounts:
-  - name: local-dns
+  local-dns:
     mountPath: /etc/pihole/custom.list
     subPath: custom.list
+    readOnly: true
