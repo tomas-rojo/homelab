@@ -4,3 +4,8 @@ serviceDns:
   annotations:
     metallb.universe.tf/address-pool: public-pool
     metallb.universe.tf/allow-shared-ip: pihole-dns
+
+extraVolumeMounts:
+  - name: local-dns
+    mountPath: /etc/pihole/custom.list
+    subPath: custom.list
