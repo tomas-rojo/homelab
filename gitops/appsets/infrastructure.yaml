@@ -10,10 +10,6 @@ spec:
         elements:
           - name: metallb
             namespace: metallb-system
-          - name: traefik-crds
-            namespace: traefik
-          - name: traefik
-            namespace: traefik
           - name: cnpg
             namespace: cnpg-system
           - name: sealed-secrets
