@@ -7,6 +7,7 @@ data:
   # Format: "domain.com IP" (space-separated, one per line)
   # These map to /etc/pihole/custom.list inside the pod
   custom.list: |
-    192.168.1.234  argocd.local
-    192.168.1.234  longhorn.local
-    192.168.1.234  pihole.local
+    192.168.1.234  argocd.home
+    192.168.1.234  longhorn.home
+    192.168.1.234  pihole.home
+    192.168.1.233  immich.home
