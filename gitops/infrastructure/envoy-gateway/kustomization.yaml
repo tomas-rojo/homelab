@@ -14,3 +14,4 @@ resources:
   - 01-gatewayclass.yaml
   - 02-gateway.yaml
   - 03-envoyproxy.yaml
+  - 04-httproute.yaml
