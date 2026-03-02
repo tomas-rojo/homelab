@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - local-dns-cm.yaml
+  - http-route.yaml
 
 helmCharts:
   - name: pihole

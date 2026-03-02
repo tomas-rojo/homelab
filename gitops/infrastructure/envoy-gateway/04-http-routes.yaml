@@ -1,22 +1,6 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: pihole-route
-  namespace: pihole
-spec:
-  parentRefs:
-  - name: gateway-api
-    namespace: envoy-gateway-system
-  hostnames:
-  - pihole.home
-  rules:
-  - backendRefs:
-    - name: pihole-web
-      port: 80
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
   name: argocd-route
   namespace: argocd
 spec:
@@ -29,19 +13,4 @@ spec:
   - backendRefs:
     - name: argocd-server
       port: 80
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: longhorn-route
-  namespace: longhorn-system
-spec:
-  parentRefs:
-  - name: gateway-api
-    namespace: envoy-gateway-system
-  hostnames:
-  - longhorn.home
-  rules:
-  - backendRefs:
-    - name: longhorn-frontend
-      port: 80
+

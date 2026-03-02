@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - storage_class.yaml
+  - http-route.yaml
 
 helmCharts:
   - name: longhorn
