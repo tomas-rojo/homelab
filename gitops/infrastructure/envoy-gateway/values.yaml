@@ -1,2 +1,6 @@
 topologyInjector:
   enabled: false # Disabled because initial certgen job was failing 
+
+service:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.1.234
