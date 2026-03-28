@@ -1,2 +1,6 @@
 crds:
   enabled: true
+
+cainjector:
+  extraArgs:
+    - --leader-election-namespace=cert-manager
