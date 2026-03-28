@@ -1,6 +1,11 @@
 crds:
   enabled: true
 
+global:
+  leaderElection:
+    namespace: cert-manager
+webhook:
+  caSecretNamespace: cert-manager
 cainjector:
   extraArgs:
     - --leader-election-namespace=cert-manager
