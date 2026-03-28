@@ -22,6 +22,8 @@ spec:
             namespace: envoy-gateway-system
           - name: envoy-gateway-crds
             namespace: envoy-gateway-system
+          - name: cert-manager
+            namespace: cert-manager
   template:
     metadata:
       name: '{{.name}}'
