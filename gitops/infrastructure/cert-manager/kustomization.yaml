@@ -3,6 +3,12 @@ kind: Kustomization
 
 namespace: cert-manager
 
+resources:
+  - 01-selfsigned-issuer.yaml
+  - 02-homelab-ca.yaml
+  - 03-homelab-ca-issuer.yaml
+  - 04-wildcard-cert.yaml
+
 helmCharts:
   - name: cert-manager
     version: 1.20.1
