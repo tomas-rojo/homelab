@@ -21,6 +21,7 @@ spec:
         certificateRefs:
         - name: homelab-wildcard-tls
           kind: Secret
+          group: ""
       allowedRoutes:
         namespaces:
           from: All
