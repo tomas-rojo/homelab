@@ -6,8 +6,14 @@ alertmanager:
 
 prometheusOperator:
   enabled: true
-  # Ensure CRDs are created before other resources
-  createCRD: true
 
-# Force wait for CRDs
+crds:
+  enabled: true
+  labels:
+    app: kube-prometheus-stack
+    app.kubernetes.io/name: kube-prometheus-stack
+    app.kubernetes.io/component: operator
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+
 waitForNodes: true
