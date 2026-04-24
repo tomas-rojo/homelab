@@ -56,6 +56,6 @@ spec:
       syncPolicy:
         syncOptions:
           - CreateNamespace=true
-          {{- if or (eq .name "cnpg") (eq .name "envoy-gateway") (eq .name "envoy-gateway-crds") }}
+          {{- if or (eq .name "cnpg") (eq .name "envoy-gateway") (eq .name "envoy-gateway-crds") (eq .name "kube-prometheus-stack") }}
           - ServerSideApply=true
           {{- end }}
