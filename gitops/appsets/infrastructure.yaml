@@ -24,6 +24,8 @@ spec:
             namespace: envoy-gateway-system
           - name: cert-manager
             namespace: cert-manager
+          - name: kube-prometheus-stack
+            namespace: monitoring
   template:
     metadata:
       name: '{{.name}}'
