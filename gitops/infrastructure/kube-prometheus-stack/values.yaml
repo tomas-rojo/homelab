@@ -1,0 +1,13 @@
+prometheus:
+  enabled: true
+
+alertmanager:
+  enabled: true
+
+prometheusOperator:
+  enabled: true
+  # Ensure CRDs are created before other resources
+  createCRD: true
+
+# Force wait for CRDs
+waitForNodes: true
