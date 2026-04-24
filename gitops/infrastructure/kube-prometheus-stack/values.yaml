@@ -1,19 +1,19 @@
-prometheus:
-  enabled: true
+# prometheus:
+#   enabled: true
 
-alertmanager:
-  enabled: true
+# alertmanager:
+#   enabled: true
 
-prometheusOperator:
-  enabled: true
+# prometheusOperator:
+#   enabled: true
 
-crds:
-  enabled: true
-  labels:
-    app: kube-prometheus-stack
-    app.kubernetes.io/name: kube-prometheus-stack
-    app.kubernetes.io/component: operator
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"
+# crds:
+#   enabled: true
+#   labels:
+#     app: kube-prometheus-stack
+#     app.kubernetes.io/name: kube-prometheus-stack
+#     app.kubernetes.io/component: operator
+#   annotations:
+#     argocd.argoproj.io/sync-wave: "0"
 
-waitForNodes: true
+# waitForNodes: true

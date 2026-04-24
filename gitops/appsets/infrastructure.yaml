@@ -59,7 +59,3 @@ spec:
           {{- if or (eq .name "cnpg") (eq .name "envoy-gateway") (eq .name "envoy-gateway-crds") }}
           - ServerSideApply=true
           {{- end }}
-          {{- if eq .name "kube-prometheus-stack" }}
-          - ServerSideApply=true
-          - SkipDryRunOnMissingCustomResource=true
-          {{- end }}
