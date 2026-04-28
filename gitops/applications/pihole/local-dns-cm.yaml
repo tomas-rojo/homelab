@@ -11,4 +11,5 @@ data:
     192.168.1.234  longhorn.home
     192.168.1.234  pihole.home
     192.168.1.234  grafana.home
+    192.168.1.234  homepage.home
     192.168.1.233  immich.home
