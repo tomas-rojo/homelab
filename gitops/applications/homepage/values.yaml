@@ -3,16 +3,6 @@ env:
     value: "dash.home"
 
 config:
-  settings:
-    title: Tomas Homelab Dashboard
-    language: en
-    theme: dark
-    color: zinc 
-    target: _self
-    headerStyle: boxed
-    statusStyle: "dot"
-    hideVersion: true
-    disableCollapse: true
   bookmarks:
     - name: Argo CD
       url: https://argocd.home
@@ -40,5 +30,25 @@ config:
       expanded: false
       cpu: true 
       cputemp: true
-      memory: true  
-      refresh: 1000
+      memory: true
+      refresh: 5000
+  - kubernetes:
+      cluster:
+        # Shows cluster-wide statistics
+        show: true
+        # Shows the aggregate CPU stats
+        cpu: true
+        # Shows the aggregate memory stats
+        memory: true
+        # Shows a custom label
+        showLabel: true
+        label: "cluster"
+      nodes:
+        # Shows node-specific statistics
+        show: true
+        # Shows the CPU for each node
+        cpu: true
+        # Shows the memory for each node
+        memory: true
+        # Shows the label, which is always the node name
+        showLabel: true
