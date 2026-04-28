@@ -1,11 +1,30 @@
 env:
   - name: HOMEPAGE_ALLOWED_HOSTS
-    value: "homepage.home"
+    value: "dash.home"
 
 config:
+  settings:
+    title: Tomas Homelab Dashboard
+    language: en
+    theme: dark
+    color: zinc 
+    target: _self
+    headerStyle: boxed
+    statusStyle: "dot"
+    hideVersion: true
+    disableCollapse: true
+  bookmarks:
+    - name: Argo CD
+      url: https://argocd.home
+    - name: Grafana
+      url: https://grafana.home
+    - name: Pihole
+      url: https://pihole.home
+    - name: Longhorn
+      url: https://longhorn.home
   widgets:
   - openmeteo:
-      label: Amsterdam Weather
+      label: Amsterdam
       latitude: 52.33964
       longitude: 4.96256
       timezone: Europe/Amsterdam
@@ -15,6 +34,11 @@ config:
         maximumFractionDigits: 1
   - datetime:
       format:
-        text_size: xl
         dateStyle: long
         timeStyle: long
+  - resources:
+      expanded: false
+      cpu: true 
+      cputemp: true
+      memory: true  
+      refresh: 1000
