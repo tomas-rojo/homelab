@@ -12,6 +12,8 @@ spec:
             namespace: pihole
           - name: immich
             namespace: immich
+          - name: homepage
+            namespace: homepage
   template:
     metadata:
       name: '{{.name}}'

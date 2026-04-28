@@ -1,0 +1,16 @@
+config:
+  widgets:
+  - openmeteo:
+      label: Amsterdam Weather
+      latitude: 52.33964
+      longitude: 4.96256
+      timezone: Europe/Amsterdam
+      units: metric
+      cache: 5 # Time in minutes to cache API responses, to stay within limits
+      format: # optional, Intl.NumberFormat options
+        maximumFractionDigits: 1
+  - datetime:
+      format:
+        text_size: xl
+        dateStyle: long
+        timeStyle: long
