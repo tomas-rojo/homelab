@@ -1,3 +1,7 @@
+env:
+  - name: HOMEPAGE_ALLOWED_HOSTS
+    value: "homepage.home"
+
 config:
   widgets:
   - openmeteo:
