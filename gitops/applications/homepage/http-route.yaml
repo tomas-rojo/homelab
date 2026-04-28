@@ -9,7 +9,7 @@ spec:
     namespace: envoy-gateway-system
     sectionName: https
   hostnames:
-  - homepage.home
+  - dash.home
   rules:
   - backendRefs:
     - name: homepage
