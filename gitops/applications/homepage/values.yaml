@@ -13,6 +13,9 @@ config:
     - name: Longhorn
       url: https://longhorn.home
   widgets:
+  - greeting:
+      text_size: 2xl
+      text: Tomas Homelab
   - openmeteo:
       label: Amsterdam
       latitude: 52.33964
@@ -23,9 +26,10 @@ config:
       format: # optional, Intl.NumberFormat options
         maximumFractionDigits: 1
   - datetime:
+      text_size: md
       format:
         dateStyle: long
-        timeStyle: long
+        hour12: false
   - resources:
       expanded: false
       cpu: true 
