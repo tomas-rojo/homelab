@@ -42,8 +42,7 @@ spec:
         targetRevision: HEAD
         path: gitops/applications/{{.name}}
   templatePatch: |
+    {{- if eq .name "homepage" }}
     spec:
       syncPolicy:
-        {{- if eq .name "homepage" }}
-        {}
-        {{- end }}
+      {{- end }}
