@@ -5,6 +5,7 @@ namespace: tailscale
 
 resources:
   - auth_key.yaml
+  - connector.yaml
 
 helmCharts:
   - name: tailscale-operator
