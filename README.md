@@ -22,7 +22,7 @@ The cluster is provisioned with Terraform, which also installs and bootstraps Ar
         <td>Lightweight Kubernetes distribution</td>
     </tr>
     <tr>
-        <td><img width="32" src="https://www.terraform.io/favicon.ico"></td>
+        <td><img width="32" src="https://cdn.jsdelivr.net/gh/selfhst/icons@main/svg/hashicorp-terraform.svg"></td>
         <td><a href="https://www.terraform.io">Terraform</a></td>
         <td>Infrastructure as Code for cluster provisioning</td>
     </tr>
@@ -37,7 +37,7 @@ The cluster is provisioned with Terraform, which also installs and bootstraps Ar
         <td>Package manager for Kubernetes</td>
     </tr>
     <tr>
-        <td><img width="32" src="https://metallb.universe.tf/img/logo.svg"></td>
+        <td><img width="32" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUc5oULW7FJ9qZN5Bn_gg30cNcvj2T4LFQyg&s"></td>
         <td><a href="https://metallb.universe.tf">MetalLB</a></td>
         <td>Load balancer for bare metal Kubernetes</td>
     </tr>
@@ -47,12 +47,12 @@ The cluster is provisioned with Terraform, which also installs and bootstraps Ar
         <td>Cloud native certificate management</td>
     </tr>
     <tr>
-        <td><img width="32" src="https://avatars.githubusercontent.com/u/envoyproxy"></td>
+        <td><img width="32" src="https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/3/envoy-6ycf61wbliq2a9l2gf061z.png/envoy-rzwegeuxv8mtrwxuorx67.png?_a=DATAiZAAZAA0"></td>
         <td><a href="https://gateway.envoy.io">Envoy Gateway</a></td>
         <td>Kubernetes Gateway API</td>
     </tr>
     <tr>
-        <td><img width="32" src="https://longhorn.io/img/LonghornLogo.svg"></td>
+        <td><img width="32" src="https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/rancher-longhorn.png"></td>
         <td><a href="https://longhorn.io">Longhorn</a></td>
         <td>Cloud-native block storage for Kubernetes</td>
     </tr>
@@ -62,12 +62,12 @@ The cluster is provisioned with Terraform, which also installs and bootstraps Ar
         <td>VPN without port forwarding</td>
     </tr>
     <tr>
-        <td><img width="32" src="https://cloudnative-pg.io/images/Logo%20CloudNativePG.png"></td>
+        <td><img width="32" src="https://cloudnative-pg.io/images/hero_image.svg"></td>
         <td><a href="https://cloudnative-pg.io">CloudNative PG</a></td>
         <td>PostgreSQL operator for Kubernetes</td>
     </tr>
     <tr>
-        <td><img width="32" src="https://raw.githubusercontent.com/bitnami-labs/sealed-secrets/main/icons/logo.svg"></td>
+        <td><img width="32" src="https://cdn-blog.lawrencemcdaniel.com/wp-content/uploads/2023/04/23063353/k8s-secret.jpg"></td>
         <td><a href="https://github.com/bitnami-labs/sealed-secrets">Sealed Secrets</a></td>
         <td>Encrypted Kubernetes secrets for Git</td>
     </tr>
