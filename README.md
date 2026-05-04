@@ -47,7 +47,7 @@ The cluster is provisioned with Terraform, which also installs and bootstraps Ar
         <td>Cloud native certificate management</td>
     </tr>
     <tr>
-        <td><img width="32" src="https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/3/envoy-6ycf61wbliq2a9l2gf061z.png/envoy-rzwegeuxv8mtrwxuorx67.png?_a=DATAiZAAZAA0"></td>
+        <td><img width="32" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrUZ1VL23BzkcsBoEJC6v9wdsnPFWNJeMwZA&s"></td>
         <td><a href="https://gateway.envoy.io">Envoy Gateway</a></td>
         <td>Kubernetes Gateway API</td>
     </tr>
