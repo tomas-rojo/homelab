@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - http-route.yaml
+  - dashboard_15757.yaml
 
 helmCharts:
   - name: kube-prometheus-stack

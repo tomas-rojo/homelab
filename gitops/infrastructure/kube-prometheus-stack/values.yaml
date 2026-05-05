@@ -3,3 +3,10 @@ crds:
 upgradeJob:
   enabled: true
   forceConflicts: true
+grafana:
+  defaultDashboardsTimezone: Europe/Amsterdam
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
