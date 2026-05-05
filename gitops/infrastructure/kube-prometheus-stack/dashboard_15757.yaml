@@ -70,7 +70,7 @@ data:
           }
         ]
       },
-      "description": "This is a modern 'Global View' dashboard for your Kubernetes cluster(s).\r\nMade for kube-prometheus-stack and take advantage of the latest Grafana features (8.x.x).\r\nGitHub repository: https://github.com/dotdc/grafana-dashboards-kubernetes",
+      "description": "This is a modern 'Global View' dashboard for your Kubernetes cluster(s).",
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 1,
@@ -150,7 +150,7 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "sum(rate(container_cpu_usage_seconds_total{id=\"/\", service=~\"$service\"}[$__rate_interval])) / sum(machine_cpu_cores)",
+              "expr": "(1 - sum(rate(node_cpu_seconds_total{mode=\"idle\"}[$__rate_interval])) / sum(rate(node_cpu_seconds_total[$__rate_interval])))",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -219,7 +219,7 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "sum(container_memory_working_set_bytes{id=\"/\", service=~\"$service\"}) / sum (machine_memory_bytes)",
+              "expr": "sum(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / sum(node_memory_MemTotal_bytes)",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -732,7 +732,7 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "sum(rate(container_cpu_usage_seconds_total{id=\"/\", service=~\"$service\"}[$__rate_interval]))",
+              "expr": "sum(rate(node_cpu_seconds_total{mode!=\"idle\"}[$__rate_interval]))",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -854,7 +854,7 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "sum(container_memory_working_set_bytes{id=\"/\", service=~\"$service\"})",
+              "expr": "sum(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -1019,7 +1019,7 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "sum(rate(container_cpu_usage_seconds_total{id=\"/\", service=~\"$service\"}[$__rate_interval])) / sum(machine_cpu_cores)",
+              "expr": "(1 - sum(rate(node_cpu_seconds_total{mode=\"idle\"}[$__rate_interval])) / sum(rate(node_cpu_seconds_total[$__rate_interval])))",
               "interval": "$resolution",
               "legendFormat": "CPU usage in %",
               "refId": "A"
@@ -1114,7 +1114,7 @@ data:
                 "uid": "${datasource}"
               },
               "exemplar": true,
-              "expr": "sum(container_memory_working_set_bytes{id=\"/\", service=~\"$service\"}) / sum (machine_memory_bytes)",
+              "expr": "sum(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / sum(node_memory_MemTotal_bytes)",
               "interval": "",
               "legendFormat": "Memory usage in %",
               "refId": "A"
