@@ -43,6 +43,13 @@ server:
   image:
     repository: ghcr.io/immich-app/immich-server
     pullPolicy: IfNotPresent
+  resources:
+    limits:
+      memory: 2Gi
+      cpu: 500m
+    requests:
+      memory: 1Gi
+      cpu: 200m
   ingress:
     main:
       enabled: false
@@ -57,6 +64,13 @@ machine-learning:
   image:
     repository: ghcr.io/immich-app/immich-machine-learning
     pullPolicy: IfNotPresent
+  resources:
+    limits:
+      memory: 2Gi
+      cpu: 500m
+    requests:
+      memory: 1Gi
+      cpu: 200m
   env:
     TRANSFORMERS_CACHE: /cache
   persistence:
