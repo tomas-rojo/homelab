@@ -945,7 +945,7 @@ data:
           "fieldConfig": {
             "defaults": {
               "color": {
-                "mode": "palette-classic"
+                "mode": "thresholds"
               },
               "custom": {
                 "axisLabel": "CPU %",
@@ -972,7 +972,7 @@ data:
                   "mode": "none"
                 },
                 "thresholdsStyle": {
-                  "mode": "off"
+                  "mode": "line"
                 }
               },
               "decimals": 2,
@@ -985,8 +985,12 @@ data:
                     "value": null
                   },
                   {
+                    "color": "orange",
+                    "value": 0.5
+                  },
+                  {
                     "color": "red",
-                    "value": 80
+                    "value": 0.7
                   }
                 ]
               },
@@ -1036,7 +1040,7 @@ data:
           "fieldConfig": {
             "defaults": {
               "color": {
-                "mode": "palette-classic"
+                "mode": "thresholds"
               },
               "custom": {
                 "axisLabel": "MEMORY",
@@ -1063,7 +1067,7 @@ data:
                   "mode": "none"
                 },
                 "thresholdsStyle": {
-                  "mode": "off"
+                  "mode": "line"
                 }
               },
               "mappings": [],
@@ -1075,8 +1079,12 @@ data:
                     "value": null
                   },
                   {
+                    "color": "orange",
+                    "value": 0.5
+                  },
+                  {
                     "color": "red",
-                    "value": 80
+                    "value": 0.7
                   }
                 ]
               },

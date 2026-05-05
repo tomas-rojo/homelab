@@ -10,13 +10,3 @@ grafana:
       enabled: true
       label: grafana_dashboard
       labelValue: "1"
-kubelet:
-  serviceMonitor:
-    cAdvisor: true
-    cAdvisorRelabelings:
-      - sourceLabels: [job]
-        targetLabel: job
-        replacement: kubernetes-cadvisor
-      - action: replace
-        targetLabel: metrics_path
-        replacement: /metrics/cadvisor
