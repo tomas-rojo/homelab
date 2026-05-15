@@ -10,3 +10,6 @@ grafana:
       enabled: true
       label: grafana_dashboard
       labelValue: "1"
+  admin:
+    existingSecret: grafana-admin-credentials
+    passwordKey: admin-password
