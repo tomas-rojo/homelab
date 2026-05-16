@@ -1,0 +1,32 @@
+persistence:
+  config:
+    enabled: true
+    mountPath: /config
+    size: 1Gi
+    storageClass: longhorn
+
+  cache:
+    enabled: true
+    mountPath: /config/cache
+    size: 10Gi
+    storageClass: longhorn
+
+  logs:
+    enabled: false
+
+  rclone:
+    enabled: false
+
+  immich-data:
+    enabled: true
+    type: pvc
+    existingClaim: immich-data-pvc
+    mountPath: /data
+    readOnly: true
+
+  gcs-credentials:
+    enabled: true
+    type: secret
+    objectName: kopia-gcs-credentials
+    mountPath: /gcs
+    readOnly: true

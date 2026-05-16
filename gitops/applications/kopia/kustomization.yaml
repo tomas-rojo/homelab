@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: immich
+
+resources:
+  - gcs-credentials.yaml
+
+helmCharts:
+  - name: kopia
+    version: 0.23.0
+    repo: "oci://oci.trueforge.org/truecharts/kopia"
+    releaseName: kopia
+    valuesFile: values.yaml
+  
