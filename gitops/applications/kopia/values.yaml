@@ -1,3 +1,22 @@
+workload:
+  main:
+    podSpec:
+      containers:
+        main:
+          envFrom:
+            - secretRef:
+                name: "kopia-secrets"
+          args:
+            - --server-username={{ .Values.kopia.server_username }}
+            - --server-password={{ .Values.kopia.server_password }}
+          probes:
+            liveness:
+              enabled: false
+            readiness:
+              enabled: false
+            startup:
+              enabled: false
+
 persistence:
   config:
     enabled: true

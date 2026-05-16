@@ -5,6 +5,7 @@ namespace: immich
 
 resources:
   - gcs-credentials.yaml
+  - kopia-credentials.yaml
 
 helmCharts:
   - name: kopia
