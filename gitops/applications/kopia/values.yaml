@@ -22,7 +22,7 @@ persistence:
     type: pvc
     existingClaim: immich-data-pvc
     mountPath: /data
-    readOnly: false
+    readOnly: true
 
   gcs-credentials:
     enabled: true
