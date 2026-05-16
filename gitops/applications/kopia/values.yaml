@@ -17,6 +17,10 @@ workload:
             startup:
               enabled: false
 
+kopia:
+  secret:
+    enabled: false
+
 persistence:
   config:
     enabled: true
