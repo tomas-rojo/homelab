@@ -23,6 +23,10 @@ secret:
     type: secret
     objectName: kopia-secrets
 
+secret:
+  kopia-kopia-secrets:
+    enabled: false
+
 persistence:
   config:
     enabled: true
