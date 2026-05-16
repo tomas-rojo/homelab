@@ -28,5 +28,6 @@ persistence:
     enabled: true
     type: secret
     objectName: kopia-gcs-credentials
+    expandObjectName: false    # tells common lib to skip the cluster lookup
     mountPath: /gcs
     readOnly: true

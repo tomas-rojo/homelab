@@ -3,7 +3,8 @@ kind: Kustomization
 
 namespace: immich
 
-resources: []
+resources:
+  - gcs-credentials.yaml
 
 helmCharts:
   - name: kopia
