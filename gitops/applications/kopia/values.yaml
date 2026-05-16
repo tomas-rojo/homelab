@@ -51,11 +51,11 @@ persistence:
     mountPath: /gcs
     readOnly: true
 
-  kopia-credentials:
+  kopia-secrets:
     enabled: true
     type: secret
-    objectName: kopia-credentials
+    objectName: kopia-secrets
     expandObjectName: false   # prevents the chart from prefixing with release name
-    mountPath: /kopia-credentials
+    mountPath: /kopia-secrets
     readOnly: true
     optional: false
