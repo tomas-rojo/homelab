@@ -9,7 +9,7 @@ resources:
 helmCharts:
   - name: kopia
     version: 28.4.0
-    repo: "oci://oci.trueforge.org/truecharts/kopia"
+    repo: "oci://oci.trueforge.org/truecharts"
     releaseName: kopia
     valuesFile: values.yaml
   
