@@ -17,9 +17,11 @@ workload:
             startup:
               enabled: false
 
-kopia:
-  secret:
-    enabled: false
+secret:
+  kopia-secrets:
+    enabled: true
+    type: secret
+    objectName: kopia-secrets
 
 persistence:
   config:
