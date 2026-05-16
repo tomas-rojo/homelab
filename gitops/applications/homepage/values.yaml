@@ -7,15 +7,20 @@ config:
     - Infrastructure:
       - Argo CD:
         - href: https://argocd.home
+          icon: argocd.png
       - Longhorn:
         - href: https://longhorn.home
+          icon: longhorn.png
       - Kopia:
         - href: https://kopia.home
+          icon: kopia.png
     - Monitoring:
       - Grafana:
         - href: https://grafana.home
+          icon: grafana.png
       - Pihole:
         - href: https://pihole.home
+          icon: pi-hole.png
   widgets:
   - greeting:
       text_size: 2xl
