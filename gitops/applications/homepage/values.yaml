@@ -12,6 +12,8 @@ config:
       url: https://pihole.home
     - name: Longhorn
       url: https://longhorn.home
+    - name: Kopia
+      url: https://kopia.home
   widgets:
   - greeting:
       text_size: 2xl

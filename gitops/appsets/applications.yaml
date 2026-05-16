@@ -43,8 +43,3 @@ spec:
         repoURL: https://github.com/tomas-rojo/homelab.git
         targetRevision: HEAD
         path: gitops/applications/{{.name}}
-  templatePatch: |
-    {{- if eq .name "homepage" }}
-    spec:
-      syncPolicy:
-      {{- end }}
