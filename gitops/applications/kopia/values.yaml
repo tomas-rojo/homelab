@@ -7,8 +7,8 @@ workload:
             - secretRef:
                 name: "kopia-secrets"
           args:
-            - --server-username={{ .Values.kopia.server_username }}
-            - --server-password={{ .Values.kopia.server_password }}
+            - --server-username=$(USER)
+            - --server-password=$(KOPIA_PASSWORD)
           probes:
             liveness:
               enabled: false
