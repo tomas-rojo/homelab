@@ -4,16 +4,18 @@ env:
 
 config:
   bookmarks:
-    - name: Argo CD
-      url: https://argocd.home
-    - name: Grafana
-      url: https://grafana.home
-    - name: Pihole
-      url: https://pihole.home
-    - name: Longhorn
-      url: https://longhorn.home
-    - name: Kopia
-      url: https://kopia.home
+    - Infrastructure:
+      - Argo CD:
+        - href: https://argocd.home
+      - Longhorn:
+        - href: https://longhorn.home
+      - Kopia:
+        - href: https://kopia.home
+    - Monitoring:
+      - Grafana:
+        - href: https://grafana.home
+      - Pihole:
+        - href: https://pihole.home
   widgets:
   - greeting:
       text_size: 2xl
