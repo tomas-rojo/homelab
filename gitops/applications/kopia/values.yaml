@@ -6,6 +6,7 @@ workload:
           envFrom:
             - secretRef:
                 name: "kopia-secrets"
+                expandObjectName: false   # prevent the chart from prefixing with release name
           args:
             - --server-username=$(USER)
             - --server-password=$(KOPIA_PASSWORD)
