@@ -7,7 +7,7 @@ config:
     - Infrastructure:
       - Argo CD:
         - href: https://argocd.home
-          icon: argocd.png
+          icon: argo-cd.png
       - Longhorn:
         - href: https://longhorn.home
           icon: longhorn.png
