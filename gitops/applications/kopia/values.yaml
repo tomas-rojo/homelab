@@ -20,7 +20,7 @@ workload:
 secret:
   kopia-secrets:
     enabled: true
-    type: secret
+    type: SealedSecret
     objectName: kopia-secrets
 
 secret:
