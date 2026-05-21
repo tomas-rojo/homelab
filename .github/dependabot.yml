@@ -1,0 +1,8 @@
+version: 2
+updates:
+  - package-ecosystem: "helm" # See documentation for possible values
+    directories:
+      - "gitops/applications/*"
+      - "gitops/infrastructure/*"
+    schedule:
+      interval: "daily"
