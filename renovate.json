@@ -4,9 +4,6 @@
   "schedule": ["at any time"],
   "prConcurrentLimit": 5,
   "labels": ["renovate", "dependencies"],
-  "argocd": {
-    "fileMatch": ["gitops/appsets/.+\\.yaml$"]
-  },
   "helm-values": {
     "fileMatch": ["gitops/.+/values\\.yaml$"]
   },
