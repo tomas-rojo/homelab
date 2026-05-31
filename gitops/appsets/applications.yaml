@@ -14,8 +14,8 @@ spec:
             namespace: immich
           - name: homepage
             namespace: homepage
-          - name: kopia
-            namespace: immich
+          # - name: kopia
+          #   namespace: immich
   template:
     metadata:
       name: '{{.name}}'
