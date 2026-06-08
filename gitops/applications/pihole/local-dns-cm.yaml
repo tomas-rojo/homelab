@@ -12,5 +12,4 @@ data:
     192.168.1.234  pihole.home
     192.168.1.234  grafana.home
     192.168.1.234  dash.home
-    192.168.1.234  kopia.home
-    192.168.1.233  immich.home
+    192.168.1.234  immich.home
