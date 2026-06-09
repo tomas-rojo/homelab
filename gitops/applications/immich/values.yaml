@@ -41,7 +41,7 @@ valkey:
 server:
   enabled: true
   image:
-    repository: ghcr.io/immich-app/immich-server
+    repository: ghcr.io/immich-app/immich-server:v2.6.0
     pullPolicy: IfNotPresent
   resources:
     limits:
