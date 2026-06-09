@@ -8,7 +8,6 @@ resources:
   - pg-secret.yaml
   - pg-cluster.yaml
   - pg-user.yaml
-  - http-route.yaml
 
 helmCharts:
   - name: immich
