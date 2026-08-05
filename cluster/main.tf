@@ -44,7 +44,7 @@ resource "google_iam_workload_identity_pool_provider" "k3s" {
   }
 
   oidc {
-    issuer_uri = "kubernetes.default.svc.cluster.local"
+    issuer_uri = "https://kubernetes.default.svc.cluster.local"
 
     # Regenerate with: kubectl get --raw /openid/v1/jwks
     # These are the cluster's SA token signing keys. Rebuilding k3s rotates them
