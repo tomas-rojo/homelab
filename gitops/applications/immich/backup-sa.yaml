@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: immich-backup
+  namespace: immich
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: immich-backup-gcp
+  namespace: immich
+data:
+  credential-config.json: |
+    {
+      "type": "external_account",
+      "audience": "//iam.googleapis.com/projects/439516416022/locations/global/workloadIdentityPools/homelab-k3s/providers/k3s-oidc",
+      "subject_token_type": "urn:ietf:params:oauth:token-type:jwt",
+      "token_url": "https://sts.googleapis.com/v1/token",
+      "credential_source": {
+        "file": "/var/run/service-account/token",
+        "format": {
+          "type": "text"
+        }
+      }
+    }

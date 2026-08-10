@@ -9,6 +9,8 @@ resources:
   - pg-cluster.yaml
   - pg-user.yaml
   - ts-service.yaml
+  - backup-sa.yaml
+  - backup-cronjob.yaml
 
 helmCharts:
   - name: immich

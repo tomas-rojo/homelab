@@ -1,0 +1,138 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: immich-gcs-backup
+  namespace: immich
+spec:
+  schedule: "0 3 * * *"       # after Immich's own pg_dump, which runs at 02:00
+  timeZone: "Europe/Amsterdam"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 3600
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 21600
+      template:
+        spec:
+          restartPolicy: OnFailure
+          serviceAccountName: immich-backup
+          automountServiceAccountToken: false
+          # immich-data-pvc is ReadWriteOnce, so this pod can only attach it on the
+          # node immich-server already occupies. Pod affinity follows it rather than
+          # pinning a node name.
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - topologyKey: kubernetes.io/hostname
+                  labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/name: server
+                      app.kubernetes.io/instance: immich
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            supplementalGroups: [568] # immich group
+          containers:
+            - name: rclone
+              image: rclone/rclone:1.75.0
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -eu
+                  COMMON="--size-only --no-update-modtime --fast-list \
+                          --stats=5m --stats-one-line --log-level INFO"
+
+                  # One top-level prefix per user. Globbed rather than hardcoded to
+                  # tomas/flor so a newly added Immich user cannot be silently left
+                  # out of the backup.
+                  for dir in /data/library/*/; do
+                    [ -d "$dir" ] || continue
+                    user=$(basename "$dir")
+                    echo "==> library/${user} -> gcs:${BUCKET}/${user}"
+                    # copy, never sync: nothing already in GCS is deleted or
+                    # overwritten. --size-only/--no-update-modtime also avoid
+                    # storage.objects.update calls, which the restricted service
+                    # account cannot make.
+                    # bwlimit is well under the ~15 MiB/s line rate so Immich and
+                    # the rest of the house stay usable while the backup runs.
+                    rclone copy "$dir" "gcs:${BUCKET}/${user}" \
+                      --transfers=4 --checkers=16 --bwlimit=12M $COMMON
+                  done
+
+                  echo "==> backups -> gcs:${BUCKET}/db_backups"
+                  rclone copy /data/backups "gcs:${BUCKET}/db_backups" \
+                    --transfers=2 $COMMON
+
+                  # Reached only if every copy succeeded, because of set -e. This is
+                  # the one alarm that still fires when the whole cluster is down.
+                  [ -n "${HC_PING_URL:-}" ] && wget -qO- --timeout=10 "$HC_PING_URL" || true
+              env:
+                - name: RCLONE_CONFIG_GCS_TYPE
+                  value: "google cloud storage"
+                - name: RCLONE_CONFIG_GCS_ENV_AUTH
+                  value: "true"
+                - name: GOOGLE_APPLICATION_CREDENTIALS
+                  value: /gcp/credential-config.json
+                # The bucket uses uniform access; without this rclone attempts ACL
+                # calls on every object and fails.
+                - name: RCLONE_CONFIG_GCS_BUCKET_POLICY_ONLY
+                  value: "true"
+                - name: RCLONE_CONFIG_GCS_STORAGE_CLASS
+                  value: ARCHIVE
+                - name: HOME
+                  value: /tmp
+                - name: BUCKET
+                  value: trojo-immich-backups
+                - name: HC_PING_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-backup-hc
+                      key: hc_ping_url
+                      optional: true
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: [ALL]
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 1Gi
+              volumeMounts:
+                - name: immich-data
+                  mountPath: /data
+                  readOnly: true
+                - name: gcp-config
+                  mountPath: /gcp
+                  readOnly: true
+                - name: gcp-token
+                  mountPath: /var/run/service-account
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: immich-data
+              persistentVolumeClaim:
+                claimName: immich-data-pvc
+                readOnly: true
+            - name: gcp-config
+              configMap:
+                name: immich-backup-gcp
+                defaultMode: 0444
+            - name: gcp-token
+              projected:
+                defaultMode: 0444
+                sources:
+                  - serviceAccountToken:
+                      path: token
+                      expirationSeconds: 3600
+                      audience: https://iam.googleapis.com/projects/439516416022/locations/global/workloadIdentityPools/homelab-k3s/providers/k3s-oidc
+            - name: tmp
+              emptyDir: {}
