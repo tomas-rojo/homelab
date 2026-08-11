@@ -11,3 +11,23 @@ spec:
         name: envoy-gateway-default
         type: LoadBalancer
         loadBalancerIP: 192.168.1.234
+      # Data plane. Peak working set 31Mi over 10d against a 512Mi request --
+      # the largest memory over-request in this repo. CPU requests are left at
+      # their current values (memory-only rightsizing).
+      envoyDeployment:
+        container:
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
+      shutdownManager:
+        container:
+          # Peak 22Mi.
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 64Mi

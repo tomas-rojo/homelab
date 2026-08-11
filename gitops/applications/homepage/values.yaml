@@ -2,6 +2,15 @@ env:
   - name: HOMEPAGE_ALLOWED_HOSTS
     value: "dash.home"
 
+# Peak working set 115Mi over 10d (p95 82Mi). The chart already requests
+# 100m/128Mi; this adds the missing memory limit and keeps CPU unchanged.
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
 config:
   bookmarks:
     - Infrastructure:
@@ -38,7 +47,7 @@ config:
         hour12: false
   - resources:
       expanded: false
-      cpu: true 
+      cpu: true
       cputemp: true
       memory: true
       refresh: 5000

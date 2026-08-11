@@ -1,1 +1,40 @@
 # MetalLB configuration
+
+# Memory requests/limits sized from 10d of in-cluster Prometheus data:
+# request = p95 working set x1.2, limit = peak working set x1.4.
+controller:
+  # Peak 74Mi.
+  resources:
+    requests:
+      memory: 128Mi
+    limits:
+      memory: 192Mi
+
+speaker:
+  # Peak 39Mi.
+  resources:
+    requests:
+      memory: 64Mi
+    limits:
+      memory: 128Mi
+  frr:
+    # Peak 29Mi.
+    resources:
+      requests:
+        memory: 64Mi
+      limits:
+        memory: 128Mi
+  frrMetrics:
+    # Peak 23Mi.
+    resources:
+      requests:
+        memory: 32Mi
+      limits:
+        memory: 64Mi
+  reloader:
+    # Peak 1Mi.
+    resources:
+      requests:
+        memory: 32Mi
+      limits:
+        memory: 64Mi

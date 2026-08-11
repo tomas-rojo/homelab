@@ -25,5 +25,12 @@ spec:
         - CREATE EXTENSION vchord CASCADE;
         - CREATE EXTENSION earthdistance CASCADE;
 
+  # Peak working set 358Mi over 10d (p95 292Mi).
+  resources:
+    requests:
+      memory: 512Mi
+    limits:
+      memory: 1Gi
+
   storage:
     size: 4Gi

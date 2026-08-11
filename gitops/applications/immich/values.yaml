@@ -36,6 +36,16 @@ immich:
 # Dependencies
 valkey:
   enabled: true
+  # Peak working set 13Mi over 10d.
+  controllers:
+    main:
+      containers:
+        main:
+          resources:
+            requests:
+              memory: 64Mi
+            limits:
+              memory: 128Mi
 
 # Immich components
 server:
@@ -43,13 +53,18 @@ server:
   image:
     repository: ghcr.io/immich-app/immich-server
     pullPolicy: IfNotPresent
-  resources:
-    limits:
-      memory: 2Gi
-      cpu: 500m
-    requests:
-      memory: 1Gi
-      cpu: 200m
+  # Peak working set 2842Mi over 10d (p95 2704Mi). Chart 0.12.0 is bjw-s
+  # app-template based: resources MUST live under controllers.main.containers.main,
+  # a top-level `server.resources` block is silently ignored.
+  controllers:
+    main:
+      containers:
+        main:
+          resources:
+            requests:
+              memory: 3Gi
+            limits:
+              memory: 4Gi
   ingress:
     main:
       enabled: false
@@ -64,13 +79,16 @@ machine-learning:
   image:
     repository: ghcr.io/immich-app/immich-machine-learning
     pullPolicy: IfNotPresent
-  resources:
-    limits:
-      memory: 2Gi
-      cpu: 500m
-    requests:
-      memory: 1Gi
-      cpu: 200m
+  # Peak working set 1069Mi over 10d (p95 721Mi).
+  controllers:
+    main:
+      containers:
+        main:
+          resources:
+            requests:
+              memory: 1Gi
+            limits:
+              memory: 2Gi
   env:
     TRANSFORMERS_CACHE: /cache
   persistence:

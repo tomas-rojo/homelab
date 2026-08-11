@@ -5,6 +5,27 @@ global:
   leaderElection:
     namespace: cert-manager
 
+# Peak working set 40Mi over 10d (controller).
+resources:
+  requests:
+    memory: 64Mi
+  limits:
+    memory: 128Mi
+
 cainjector:
   extraArgs:
     - --leader-election-namespace=cert-manager
+  # Peak 70Mi.
+  resources:
+    requests:
+      memory: 128Mi
+    limits:
+      memory: 192Mi
+
+webhook:
+  # Peak 25Mi.
+  resources:
+    requests:
+      memory: 64Mi
+    limits:
+      memory: 128Mi
