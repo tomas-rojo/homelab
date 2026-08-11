@@ -20,9 +20,7 @@ spec:
           restartPolicy: OnFailure
           serviceAccountName: immich-backup
           automountServiceAccountToken: false
-          # immich-data-pvc is ReadWriteOnce, so this pod can only attach it on the
-          # node immich-server already occupies. Pod affinity follows it rather than
-          # pinning a node name.
+          # Follow immich-server: the RWO PVC can only attach on its node.
           affinity:
             podAffinity:
               requiredDuringSchedulingIgnoredDuringExecution:
@@ -43,33 +41,36 @@ spec:
               args:
                 - |
                   set -eu
-                  COMMON="--size-only --no-update-modtime --fast-list \
+                  # SA has objectCreator only (no delete/update): never overwrite
+                  # existing objects or GCS 403s. --ignore-existing also sidesteps
+                  # the lost-response re-attempt collision on bwlimited links.
+                  COMMON="--ignore-existing --no-update-modtime --fast-list \
                           --stats=5m --stats-one-line --log-level INFO"
 
-                  # One top-level prefix per user. Globbed rather than hardcoded to
-                  # tomas/flor so a newly added Immich user cannot be silently left
-                  # out of the backup.
-                  for dir in /data/library/*/; do
-                    [ -d "$dir" ] || continue
-                    user=$(basename "$dir")
-                    echo "==> library/${user} -> gcs:${BUCKET}/${user}"
-                    # copy, never sync: nothing already in GCS is deleted or
-                    # overwritten. --size-only/--no-update-modtime also avoid
-                    # storage.objects.update calls, which the restricted service
-                    # account cannot make.
-                    # bwlimit is well under the ~15 MiB/s line rate so Immich and
-                    # the rest of the house stay usable while the backup runs.
-                    rclone copy "$dir" "gcs:${BUCKET}/${user}" \
-                      --transfers=4 --checkers=16 --bwlimit=12M $COMMON
-                  done
-
+                  # DB dumps first: cannot be rebuilt from photos; failure is fatal.
                   echo "==> backups -> gcs:${BUCKET}/db_backups"
                   rclone copy /data/backups "gcs:${BUCKET}/db_backups" \
                     --transfers=2 $COMMON
 
-                  # Reached only if every copy succeeded, because of set -e. This is
-                  # the one alarm that still fires when the whole cluster is down.
-                  [ -n "${HC_PING_URL:-}" ] && wget -qO- --timeout=10 "$HC_PING_URL" || true
+                  # One top-level prefix per user; globbed so new users aren't skipped.
+                  rc=0
+                  for dir in /data/library/*/; do
+                    [ -d "$dir" ] || continue
+                    user=$(basename "$dir")
+                    echo "==> library/${user} -> gcs:${BUCKET}/${user}"
+                    # copy, never sync: nothing in GCS is deleted or overwritten.
+                    # bwlimit keeps the rest of the house usable while backing up.
+                    # "|| rc=1": one bad user dir must not stop the remaining users.
+                    rclone copy "$dir" "gcs:${BUCKET}/${user}" \
+                      --transfers=4 --checkers=16 --bwlimit=12M $COMMON || rc=1
+                  done
+                  [ "$rc" -eq 0 ] || echo "WARNING: at least one library copy failed"
+
+                  # Pinged only when every copy succeeded.
+                  if [ "$rc" -eq 0 ] && [ -n "${HC_PING_URL:-}" ]; then
+                    wget -qO- --timeout=10 "$HC_PING_URL" || true
+                  fi
+                  exit "$rc"
               env:
                 - name: RCLONE_CONFIG_GCS_TYPE
                   value: "google cloud storage"
