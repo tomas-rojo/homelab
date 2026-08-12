@@ -5,7 +5,7 @@ metadata:
   name: immich-gcs-backup
   namespace: immich
 spec:
-  schedule: "0 3 * * *"       # after Immich's own pg_dump, which runs at 02:00
+  schedule: "0 5 * * *"
   timeZone: "Europe/Amsterdam"
   concurrencyPolicy: Forbid
   startingDeadlineSeconds: 3600
