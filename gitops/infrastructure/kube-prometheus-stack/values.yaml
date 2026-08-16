@@ -15,6 +15,17 @@ prometheus:
         memory: 2Gi
       limits:
         memory: 3Gi
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: longhorn
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 25Gi
+    # Measured ~1.15Gi/day (236k series @ 30s scrape, ~429Mi WAL per 2.3h);
+    # 14d retention needs ~16Gi, sized to 25Gi for compaction spikes.
+    retention: 14d
 
 prometheusOperator:
   # Peak 40Mi.
