@@ -1,1 +1,7 @@
-# TODO
+# Peak working set 37Mi over 10d (operator only; the Postgres Cluster CR is
+# sized separately in gitops/applications/immich/pg-cluster.yaml).
+resources:
+  requests:
+    memory: 64Mi
+  limits:
+    memory: 128Mi

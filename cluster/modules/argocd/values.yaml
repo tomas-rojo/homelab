@@ -1,5 +1,61 @@
+# Memory requests/limits sized from 10d of in-cluster Prometheus data:
+# request = p95 working set x1.2, limit = peak working set x1.4.
+controller:
+  # Peak 546Mi (p95 461Mi).
+  resources:
+    requests:
+      memory: 768Mi
+    limits:
+      memory: 1Gi
+
 repoServer:
   replicas: 2
+  # Peak 195Mi (p95 78Mi) -- bursty during manifest rendering.
+  resources:
+    requests:
+      memory: 256Mi
+    limits:
+      memory: 384Mi
+
+server:
+  # Peak 74Mi.
+  resources:
+    requests:
+      memory: 128Mi
+    limits:
+      memory: 192Mi
+
+redis:
+  # Peak 14Mi.
+  resources:
+    requests:
+      memory: 64Mi
+    limits:
+      memory: 128Mi
+
+dex:
+  # Peak 36Mi.
+  resources:
+    requests:
+      memory: 64Mi
+    limits:
+      memory: 128Mi
+
+applicationSet:
+  # Peak 37Mi.
+  resources:
+    requests:
+      memory: 64Mi
+    limits:
+      memory: 128Mi
+
+notifications:
+  # Peak 26Mi.
+  resources:
+    requests:
+      memory: 64Mi
+    limits:
+      memory: 128Mi
 
 configs:
   cm:

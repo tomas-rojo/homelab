@@ -1,3 +1,9 @@
-# operatorConfig:
-#   authKey:
-#     existingSecret: operator-auth
+operatorConfig:
+  # authKey:
+  #   existingSecret: operator-auth
+  # Peak working set 50Mi over 10d.
+  resources:
+    requests:
+      memory: 96Mi
+    limits:
+      memory: 128Mi

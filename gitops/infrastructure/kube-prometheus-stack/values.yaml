@@ -3,9 +3,74 @@ crds:
 upgradeJob:
   enabled: true
   forceConflicts: true
+
+# Memory requests/limits sized from 10d of in-cluster Prometheus data:
+# request = p95 working set x1.2, limit = peak working set x1.4.
+prometheus:
+  prometheusSpec:
+    # Peak 2098Mi (p95 1518Mi). NOTE: the TSDB head grows with active series --
+    # revisit this limit if scrape targets are added.
+    resources:
+      requests:
+        memory: 2Gi
+      limits:
+        memory: 3Gi
+
+prometheusOperator:
+  # Peak 40Mi.
+  resources:
+    requests:
+      memory: 64Mi
+    limits:
+      memory: 128Mi
+  prometheusConfigReloader:
+    # Peak 20Mi.
+    resources:
+      requests:
+        memory: 32Mi
+      limits:
+        memory: 64Mi
+
+alertmanager:
+  alertmanagerSpec:
+    # Peak 30Mi (chart default requests 200Mi).
+    resources:
+      requests:
+        memory: 64Mi
+      limits:
+        memory: 128Mi
+
+kube-state-metrics:
+  # Peak 36Mi.
+  resources:
+    requests:
+      memory: 64Mi
+    limits:
+      memory: 128Mi
+
+prometheus-node-exporter:
+  # Peak 21Mi.
+  resources:
+    requests:
+      memory: 32Mi
+    limits:
+      memory: 64Mi
+
 grafana:
   defaultDashboardsTimezone: Europe/Amsterdam
+  # Peak 485Mi (p95 212Mi).
+  resources:
+    requests:
+      memory: 256Mi
+    limits:
+      memory: 768Mi
   sidecar:
+    # sc-dashboard and sc-datasources, peak 90Mi each.
+    resources:
+      requests:
+        memory: 128Mi
+      limits:
+        memory: 192Mi
     dashboards:
       enabled: true
       label: grafana_dashboard

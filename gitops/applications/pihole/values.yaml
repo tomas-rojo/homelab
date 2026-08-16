@@ -5,6 +5,13 @@ serviceDns:
     metallb.universe.tf/address-pool: public-pool
     metallb.universe.tf/allow-shared-ip: pihole-dns
 
+# Peak working set 77Mi over 10d (p95 72Mi).
+resources:
+  requests:
+    memory: 128Mi
+  limits:
+    memory: 192Mi
+
 extraVolumes:
   local-dns:
     configMap:
