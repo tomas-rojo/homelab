@@ -64,7 +64,7 @@ server:
             requests:
               memory: 3Gi
             limits:
-              memory: 4Gi
+              memory: 4.5Gi
   ingress:
     main:
       enabled: false
