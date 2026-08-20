@@ -6,3 +6,6 @@ longhornUI:
 
 defaultSettings:
   defaultReplicaCount: 2
+
+persistence:
+  defaultClassReplicaCount: 2
