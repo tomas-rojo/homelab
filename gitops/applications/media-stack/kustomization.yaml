@@ -1,0 +1,93 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: media
+
+resources:
+  - pvcs.yaml
+  - http-routes.yaml
+
+# One Argo CD Application renders this whole stack. Every service is its own
+# Helm release so each keeps its own Deployment, Service and values file, but
+# they share the namespace, the Longhorn volumes and the TRaSH data layout.
+helmCharts:
+  - name: app-template
+    version: 5.3.0
+    repo: "https://bjw-s-labs.github.io/helm-charts"
+    releaseName: flaresolverr
+    namespace: media
+    valuesFile: flaresolverr-values.yaml
+
+  - name: app-template
+    version: 5.3.0
+    repo: "https://bjw-s-labs.github.io/helm-charts"
+    releaseName: jackett
+    namespace: media
+    valuesFile: jackett-values.yaml
+
+  - name: app-template
+    version: 5.3.0
+    repo: "https://bjw-s-labs.github.io/helm-charts"
+    releaseName: qbittorrent
+    namespace: media
+    valuesFile: qbittorrent-values.yaml
+
+  - name: app-template
+    version: 5.3.0
+    repo: "https://bjw-s-labs.github.io/helm-charts"
+    releaseName: sonarr
+    namespace: media
+    valuesFile: sonarr-values.yaml
+
+  - name: app-template
+    version: 5.3.0
+    repo: "https://bjw-s-labs.github.io/helm-charts"
+    releaseName: radarr
+    namespace: media
+    valuesFile: radarr-values.yaml
+
+  - name: app-template
+    version: 5.3.0
+    repo: "https://bjw-s-labs.github.io/helm-charts"
+    releaseName: bazarr
+    namespace: media
+    valuesFile: bazarr-values.yaml
+
+  - name: app-template
+    version: 5.3.0
+    repo: "https://bjw-s-labs.github.io/helm-charts"
+    releaseName: jellyfin
+    namespace: media
+    valuesFile: jellyfin-values.yaml
+
+  - name: app-template
+    version: 5.3.0
+    repo: "https://bjw-s-labs.github.io/helm-charts"
+    releaseName: seerr
+    namespace: media
+    valuesFile: seerr-values.yaml
+
+  - name: app-template
+    version: 5.3.0
+    repo: "https://bjw-s-labs.github.io/helm-charts"
+    releaseName: wizarr
+    namespace: media
+    valuesFile: wizarr-values.yaml
+
+# Pin the whole stack to the worker node.
+#
+# The control plane is schedulable (it carries no taint), so without this a pod
+# can land on k8s-cp-01 on a reschedule and compete with the API server, etcd
+# and Longhorn's own control-plane components.
+#
+# This is a stack-wide scheduling policy, not a per-app setting: keeping it here
+# means a new app added to the stack inherits it instead of silently landing on
+# the wrong node. The patch targets every Deployment the chart renders above.
+patches:
+  - target:
+      kind: Deployment
+    patch: |-
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          kubernetes.io/hostname: k8s-wk-01

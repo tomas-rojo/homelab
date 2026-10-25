@@ -1,0 +1,37 @@
+# FlareSolverr - solves Cloudflare challenges for indexers.
+#
+# No HTTPRoute: it is an internal API called by Sonarr/Radarr
+# (Settings -> Indexer Proxies -> http://flaresolverr:8191/). Stateless, no PVC.
+global:
+  fullnameOverride: flaresolverr
+
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/flaresolverr/flaresolverr
+          tag: v3.5.2
+        env:
+          TZ: Europe/Amsterdam
+          LOG_LEVEL: info
+        probes:
+          liveness:
+            enabled: true
+            type: TCP
+            port: 8191
+          readiness:
+            enabled: true
+            type: TCP
+            port: 8191
+        resources:
+          requests:
+            memory: 128Mi
+          limits:
+            memory: 512Mi
+
+service:
+  main:
+    ports:
+      http:
+        port: 8191

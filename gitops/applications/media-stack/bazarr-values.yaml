@@ -1,0 +1,52 @@
+# Bazarr - automatic subtitles. It only needs the finished library, not the
+# torrent staging tree, so the shared volume is mounted with subPath media.
+global:
+  fullnameOverride: bazarr
+
+defaultPodOptions:
+  securityContext:
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: lscr.io/linuxserver/bazarr
+          tag: 1.6.2
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: Europe/Amsterdam
+        probes:
+          liveness:
+            enabled: true
+            type: TCP
+            port: 6767
+          readiness:
+            enabled: true
+            type: TCP
+            port: 6767
+        resources:
+          requests:
+            memory: 128Mi
+          limits:
+            memory: 512Mi
+
+service:
+  main:
+    ports:
+      http:
+        port: 6767
+
+persistence:
+  config:
+    existingClaim: bazarr-config
+    globalMounts:
+      - path: /config
+  data:
+    existingClaim: media-data
+    globalMounts:
+      - path: /data/media
+        subPath: media

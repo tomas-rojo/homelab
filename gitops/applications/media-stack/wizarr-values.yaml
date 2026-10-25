@@ -1,0 +1,69 @@
+# Wizarr - user invitation links.
+#
+# Upstream image instead of the pablokbs fork the Compose stack used: that fork
+# existed only to make APPLICATION_ROOT=/wizarr work behind Caddy's path
+# routing. With a dedicated wizarr.home hostname the root path is just /, so no
+# application-root override is needed.
+#
+# The entrypoint must start as root to create and chown PUID/PGID, then drops
+# privileges, so no runAsUser is pinned here.
+global:
+  fullnameOverride: wizarr
+
+defaultPodOptions:
+  securityContext:
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/wizarrrr/wizarr
+          tag: 2025.9.0
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: Europe/Amsterdam
+        # The container seeds wizard steps and runs alembic migrations before it
+        # starts serving, which takes well over the chart default of a probe
+        # every 10s with 3 failures: it was restarting in a loop before it ever
+        # reached the listening state. Timing fields live under `spec`, which
+        # the chart merges on top of what it derives from type/path/port.
+        probes:
+          liveness:
+            enabled: true
+            type: HTTP
+            path: /health
+            port: 5690
+            spec:
+              initialDelaySeconds: 60
+              periodSeconds: 20
+              failureThreshold: 6
+          readiness:
+            enabled: true
+            type: HTTP
+            path: /health
+            port: 5690
+            spec:
+              initialDelaySeconds: 20
+              periodSeconds: 10
+              failureThreshold: 6
+        resources:
+          requests:
+            memory: 128Mi
+          limits:
+            memory: 384Mi
+
+service:
+  main:
+    ports:
+      http:
+        port: 5690
+
+persistence:
+  config:
+    existingClaim: wizarr-config
+    globalMounts:
+      - path: /data

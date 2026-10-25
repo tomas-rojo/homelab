@@ -1,0 +1,129 @@
+# Shared media volume.
+#
+# ReadWriteMany on purpose: Sonarr, Radarr, qBittorrent, Bazarr and Jellyfin all
+# mount the same volume, and the *arr imports rely on hardlinks between
+# /data/torrents and /data/media. Longhorn serves RWX through a share-manager
+# (NFS), which keeps a single filesystem underneath, so hardlinks and atomic
+# renames keep working across pods.
+#
+# 200Gi is a starting point: the volume is expandable in place (the
+# longhorn-media StorageClass sets allowVolumeExpansion).
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-data
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: longhorn-media
+  resources:
+    requests:
+      storage: 200Gi
+---
+# Per-app config volumes. SQLite databases, settings and Jellyfin metadata live
+# here; media files never do.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sonarr-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn-media
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: radarr-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn-media
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bazarr-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn-media
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jackett-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn-media
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qbittorrent-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn-media
+  resources:
+    requests:
+      storage: 2Gi
+---
+# Jellyfin keeps metadata, artwork caches and library databases in /config.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn-media
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: seerr-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn-media
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wizarr-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn-media
+  resources:
+    requests:
+      storage: 1Gi

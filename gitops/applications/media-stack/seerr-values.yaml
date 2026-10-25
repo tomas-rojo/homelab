@@ -1,0 +1,53 @@
+# Seerr - request management UI (the Jellyseerr successor).
+#
+# The image runs as uid/gid 1000 (user `node`), so the pod is pinned to those
+# IDs and /app/config is group-writable through fsGroup.
+global:
+  fullnameOverride: seerr
+
+defaultPodOptions:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: docker.io/seerr/seerr
+          tag: v3.5.1
+        env:
+          TZ: Europe/Amsterdam
+          LOG_LEVEL: info
+          PORT: "5055"
+        probes:
+          liveness:
+            enabled: true
+            type: HTTP
+            path: /api/v1/settings/public
+            port: 5055
+          readiness:
+            enabled: true
+            type: HTTP
+            path: /api/v1/settings/public
+            port: 5055
+        resources:
+          requests:
+            memory: 256Mi
+          limits:
+            memory: 768Mi
+
+service:
+  main:
+    ports:
+      http:
+        port: 5055
+
+persistence:
+  config:
+    existingClaim: seerr-config
+    globalMounts:
+      - path: /app/config

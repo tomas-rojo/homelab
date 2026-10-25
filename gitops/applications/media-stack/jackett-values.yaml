@@ -1,0 +1,50 @@
+# Jackett - indexer manager. Sonarr/Radarr reach it at http://jackett:9117.
+#
+# The Compose stack also mounted a downloads directory for Jackett's blackhole
+# folder; nothing in the stack used it, so it is intentionally not carried over.
+global:
+  fullnameOverride: jackett
+
+defaultPodOptions:
+  securityContext:
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: lscr.io/linuxserver/jackett
+          tag: 0.24.2900
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: Europe/Amsterdam
+          AUTO_UPDATE: "true"
+        probes:
+          liveness:
+            enabled: true
+            type: TCP
+            port: 9117
+          readiness:
+            enabled: true
+            type: TCP
+            port: 9117
+        resources:
+          requests:
+            memory: 128Mi
+          limits:
+            memory: 512Mi
+
+service:
+  main:
+    ports:
+      http:
+        port: 9117
+
+persistence:
+  config:
+    existingClaim: jackett-config
+    globalMounts:
+      - path: /config

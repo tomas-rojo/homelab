@@ -1,0 +1,145 @@
+# Envoy Gateway replaces Caddy here. Instead of path-prefix routing on a single
+# host (`/sonarr`, `/radarr`, ...) every app gets its own subdomain under the
+# *.home wildcard certificate, so no app needs a Base URL / UrlBase setting.
+#
+# FlareSolverr intentionally has no route: it is only reached by Sonarr/Radarr
+# over the in-cluster Service `http://flaresolverr:8191`.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: jellyfin-route
+  namespace: media
+spec:
+  parentRefs:
+    - name: gateway-api
+      namespace: envoy-gateway-system
+      sectionName: https
+  hostnames:
+    - jellyfin.home
+  rules:
+    # Envoy Gateway applies a 15s request timeout by default, which kills long
+    # playback/streaming responses. Disable it for the media server only.
+    - timeouts:
+        request: 0s
+      backendRefs:
+        - name: jellyfin
+          port: 8096
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: sonarr-route
+  namespace: media
+spec:
+  parentRefs:
+    - name: gateway-api
+      namespace: envoy-gateway-system
+      sectionName: https
+  hostnames:
+    - sonarr.home
+  rules:
+    - backendRefs:
+        - name: sonarr
+          port: 8989
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: radarr-route
+  namespace: media
+spec:
+  parentRefs:
+    - name: gateway-api
+      namespace: envoy-gateway-system
+      sectionName: https
+  hostnames:
+    - radarr.home
+  rules:
+    - backendRefs:
+        - name: radarr
+          port: 7878
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: bazarr-route
+  namespace: media
+spec:
+  parentRefs:
+    - name: gateway-api
+      namespace: envoy-gateway-system
+      sectionName: https
+  hostnames:
+    - bazarr.home
+  rules:
+    - backendRefs:
+        - name: bazarr
+          port: 6767
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: qbittorrent-route
+  namespace: media
+spec:
+  parentRefs:
+    - name: gateway-api
+      namespace: envoy-gateway-system
+      sectionName: https
+  hostnames:
+    - qbittorrent.home
+  rules:
+    - backendRefs:
+        - name: qbittorrent
+          port: 8080
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: jackett-route
+  namespace: media
+spec:
+  parentRefs:
+    - name: gateway-api
+      namespace: envoy-gateway-system
+      sectionName: https
+  hostnames:
+    - jackett.home
+  rules:
+    - backendRefs:
+        - name: jackett
+          port: 9117
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: seerr-route
+  namespace: media
+spec:
+  parentRefs:
+    - name: gateway-api
+      namespace: envoy-gateway-system
+      sectionName: https
+  hostnames:
+    - seerr.home
+  rules:
+    - backendRefs:
+        - name: seerr
+          port: 5055
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: wizarr-route
+  namespace: media
+spec:
+  parentRefs:
+    - name: gateway-api
+      namespace: envoy-gateway-system
+      sectionName: https
+  hostnames:
+    - wizarr.home
+  rules:
+    - backendRefs:
+        - name: wizarr
+          port: 5690
