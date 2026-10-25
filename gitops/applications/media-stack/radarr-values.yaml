@@ -1,0 +1,52 @@
+# Radarr - movie library automation. Same TRaSH data layout as Sonarr: the whole
+# media-data volume is mounted at /data so imports are hardlinks.
+global:
+  fullnameOverride: radarr
+
+defaultPodOptions:
+  securityContext:
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: lscr.io/linuxserver/radarr
+          tag: 6.4.4
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: Europe/Amsterdam
+        probes:
+          liveness:
+            enabled: true
+            type: TCP
+            port: 7878
+          readiness:
+            enabled: true
+            type: TCP
+            port: 7878
+        # Initial sizing, not measured.
+        resources:
+          requests:
+            memory: 128Mi
+          limits:
+            memory: 512Mi
+
+service:
+  main:
+    ports:
+      http:
+        port: 7878
+
+persistence:
+  config:
+    existingClaim: radarr-config
+    globalMounts:
+      - path: /config
+  data:
+    existingClaim: media-data
+    globalMounts:
+      - path: /data

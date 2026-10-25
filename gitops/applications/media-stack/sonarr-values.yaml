@@ -1,0 +1,56 @@
+# Sonarr - TV library automation.
+#
+# The whole media-data volume is mounted at /data (TRaSH Guides layout) so an
+# import from /data/torrents to /data/media is a hardlink on one filesystem
+# instead of a copy across mounts.
+global:
+  fullnameOverride: sonarr
+
+defaultPodOptions:
+  securityContext:
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: lscr.io/linuxserver/sonarr
+          tag: 4.0.20
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: Europe/Amsterdam
+        probes:
+          liveness:
+            enabled: true
+            type: TCP
+            port: 8989
+          readiness:
+            enabled: true
+            type: TCP
+            port: 8989
+        # Initial sizing, not measured. Tune from cAdvisor/Prometheus once the
+        # library scan and imports have run for a few days.
+        resources:
+          requests:
+            memory: 128Mi
+          limits:
+            memory: 512Mi
+
+service:
+  main:
+    ports:
+      http:
+        port: 8989
+
+persistence:
+  config:
+    existingClaim: sonarr-config
+    globalMounts:
+      - path: /config
+  data:
+    existingClaim: media-data
+    globalMounts:
+      - path: /data

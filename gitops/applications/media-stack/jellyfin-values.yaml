@@ -1,0 +1,74 @@
+# Jellyfin - media server.
+#
+# Only the finished library is mounted (subPath media). Transcodes go to an
+# emptyDir so they never bloat the Longhorn volume or get replicated.
+global:
+  fullnameOverride: jellyfin
+
+defaultPodOptions:
+  securityContext:
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: lscr.io/linuxserver/jellyfin
+          tag: 12.3ubu2604-ls56
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: Europe/Amsterdam
+          # Replaces the Compose stack's http://localhost:8096. Envoy Gateway
+          # terminates TLS for jellyfin.home, so clients get absolute URLs with
+          # the right scheme and host.
+          JELLYFIN_PublishedServerUrl: https://jellyfin.home
+        probes:
+          startup:
+            enabled: true
+            type: TCP
+            port: 8096
+            spec:
+              initialDelaySeconds: 10
+              failureThreshold: 30
+              periodSeconds: 10
+          liveness:
+            enabled: true
+            type: HTTP
+            path: /health
+            port: 8096
+          readiness:
+            enabled: true
+            type: HTTP
+            path: /health
+            port: 8096
+        # Jellyfin is the heaviest pod here: library scans and transcodes.
+        resources:
+          requests:
+            memory: 512Mi
+          limits:
+            memory: 2Gi
+
+service:
+  main:
+    ports:
+      http:
+        port: 8096
+
+persistence:
+  config:
+    existingClaim: jellyfin-config
+    globalMounts:
+      - path: /config
+  data:
+    existingClaim: media-data
+    globalMounts:
+      - path: /data/media
+        subPath: media
+  transcode:
+    type: emptyDir
+    sizeLimit: 10Gi
+    globalMounts:
+      - path: /transcodes
