@@ -6,7 +6,7 @@ A GitOps-based Kubernetes homelab managed with Terraform and ArgoCD.
 
 The cluster is provisioned with Terraform, which also installs and bootstraps ArgoCD. All workloads are then managed through ArgoCD using two ApplicationSets:
 - **Infrastructure**: Platform components (MetalLB, cert-manager, Envoy Gateway, Longhorn, CNPG, Sealed Secrets, Prometheus, Grafana, Tailscale)
-- **Applications**: User-facing services (Pi-hole, Immich)
+- **Applications**: User-facing services (Pi-hole, Immich, Homepage, Media stack)
 
 ## Tech Stack
 
@@ -83,6 +83,18 @@ The cluster is provisioned with Terraform, which also installs and bootstraps Ar
     </tr>
 </table>
 
+## Media Stack
+
+Jellyfin, Sonarr, Radarr, Bazarr, qBittorrent, Jackett, FlareSolverr, Seerr and
+Wizarr run as a single Argo CD Application (`gitops/applications/media-stack/`),
+one app-template Helm release per service. Ingress goes through Envoy Gateway
+with one hostname per app (`jellyfin.home`, `sonarr.home`, ...), so no reverse
+proxy sidecar and no path-prefix base-URL configuration is needed.
+
+See [gitops/applications/media-stack/README.md](./gitops/applications/media-stack/README.md)
+for the storage layout, first-boot steps and migration from the Docker Compose
+version.
+
 ## Key Details
 
 - MetalLB LoadBalancer IP range: 192.168.1.230–239
@@ -94,3 +106,4 @@ The cluster is provisioned with Terraform, which also installs and bootstraps Ar
 - [AGENTS.md](./AGENTS.md) - Detailed development documentation
 - [cluster/](./cluster/) - Terraform for cluster provisioning
 - [gitops/](./gitops/) - ArgoCD application definitions
+- [media-stack/](./gitops/applications/media-stack/) - Jellyfin + *arr stack
