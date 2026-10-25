@@ -92,8 +92,7 @@ with one hostname per app (`jellyfin.home`, `sonarr.home`, ...), so no reverse
 proxy sidecar and no path-prefix base-URL configuration is needed.
 
 See [gitops/applications/media-stack/README.md](./gitops/applications/media-stack/README.md)
-for the storage layout, first-boot steps and migration from the Docker Compose
-version.
+for the storage layout, first-boot steps and operating notes.
 
 ## Key Details
 

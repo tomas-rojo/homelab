@@ -1,23 +1,13 @@
 # media-stack
 
-Kubernetes port of the Docker Compose media stack from
-[Pelado-Nerdworks/media-stack](https://github.com/Pelado-Nerdworks/media-stack):
-Jellyfin, Sonarr, Radarr, Bazarr, qBittorrent, Jackett, FlareSolverr, Seerr and
-Wizarr, running as one Argo CD Application in the `media` namespace.
+One Argo CD Application in the `media` namespace: Jellyfin, Sonarr, Radarr,
+Bazarr, qBittorrent, Jackett, FlareSolverr, Seerr and Wizarr.
 
 Every service is rendered from the `bjw-s` **app-template** chart (one Helm
 release per app, all pinned to `5.3.0`) with the app-specific values in this
 directory. The only hand-written resources are the PVCs and the HTTPRoutes.
 
-## What changed versus the Compose stack
-
-**Caddy is gone.** The homelab terminates ingress with Envoy Gateway and a
-wildcard `*.home` certificate, so the whole Caddy layer, its `Caddyfile`, and
-the TLS/ACME setup that came with it are not needed.
-
-**Path routing became subdomain routing.** The Compose stack exposed one host
-with path prefixes (`/sonarr`, `/radarr`, ...). Here each app gets its own
-hostname under the wildcard certificate:
+## Services
 
 | Service | URL | Backend |
 | --- | --- | --- |
@@ -31,20 +21,10 @@ hostname under the wildcard certificate:
 | Wizarr | `https://wizarr.home` | `wizarr:5690` |
 | FlareSolverr | *(no route)* | `flaresolverr:8191` (in-cluster only) |
 
-Two nice consequences fall out of this:
-
-- `scripts/configure-base-urls.sh` is not needed. There is no subpath to strip,
-  so no app needs a Base URL / UrlBase setting.
-- qBittorrent, Jackett and FlareSolverr no longer need dedicated host ports.
-  qBittorrent and Jackett get real hostnames, and FlareSolverr stays internal,
-  reached as `http://flaresolverr:8191` from Sonarr/Radarr.
-
-**Wizarr uses the upstream image.** The Compose stack ran the `pablokbs/wizarr`
-fork because it added `APPLICATION_ROOT` support for `/wizarr`. On a dedicated
-hostname the root path is `/`, so the fork is unnecessary.
-
-**Jackett no longer mounts a downloads directory.** Nothing in the stack used
-its blackhole folder.
+Each app gets its own hostname under the wildcard `*.home` certificate, so no
+app needs a Base URL / subpath setting, and qBittorrent, Jackett and FlareSolverr
+need no dedicated host ports. FlareSolverr is reached from Sonarr/Radarr as
+`http://flaresolverr:8191`.
 
 ## Layout
 
@@ -64,13 +44,9 @@ The ApplicationSet entry lives in `gitops/appsets/applications.yaml`:
   namespace: media
 ```
 
-PVCs use the `longhorn-media` StorageClass
-(`gitops/infrastructure/longhorn/storage_class_media.yaml`): expandable,
-`Retain` reclaim policy, 2 replicas.
+## Storage
 
-## Storage and the TRaSH layout
-
-The stack keeps the TRaSH Guides folder convention, adapted to Kubernetes:
+`media-data` is one `ReadWriteMany` volume following the TRaSH layout:
 
 ```
 media-data (PVC, ReadWriteMany)
@@ -84,8 +60,6 @@ media-data (PVC, ReadWriteMany)
     └── music/
 ```
 
-Mounts per pod:
-
 | Pod | Mount |
 | --- | --- |
 | Sonarr, Radarr | whole volume at `/data` |
@@ -98,105 +72,81 @@ instead of copies: `/data/torrents` and `/data/media` are on the same
 filesystem, so a move is an inode rename. Splitting them into separate PVCs
 would silently reintroduce copy + delete.
 
-### Why ReadWriteMany, and the one sharp edge
+Longhorn implements RWX with a `share-manager` pod exporting the volume over
+NFS, which keeps one filesystem underneath and preserves hardlinks. Two
+consequences:
 
-Five pods share the same volume, so `media-data` is `ReadWriteMany`. Longhorn
-implements that with a `share-manager` pod exporting the volume over NFS, which
-keeps one filesystem underneath and preserves hardlinks.
+- **The RWX volume arrives root-owned.** The Longhorn CSI driver only applies
+  `fsGroup` fixes to `ReadWriteOnce` volumes, so qBittorrent runs an init
+  container as root that creates the directory tree and chowns the top level to
+  `1000:1000`; the container itself runs as `PUID=1000` / `PGID=1000`.
+- **Every node that mounts it needs an NFS client.** `nfs-common` is installed on
+  the worker node, which is the only node running these pods.
 
-The edge: the Longhorn CSI driver only applies `fsGroup` ownership fixes to
-`ReadWriteOnce` volumes, so the RWX volume arrives root-owned. That is why the
-qBittorrent pod runs an init container as root that creates the directory tree
-and chowns the top level to `1000:1000` before anything else starts. The
-qBittorrent container itself runs as `PUID=1000` / `PGID=1000`.
+### One replica, on the worker node
 
-### Capacity and replicas
+All volumes use the `longhorn-media` StorageClass
+(`gitops/infrastructure/longhorn/storage_class_media.yaml`):
 
-`media-data` requests 200Gi with `numberOfReplicas: "2"`. Longhorn places one
-**full replica per node**, so the volume commits **400Gi of raw capacity across
-the cluster**, not 200Gi. It is thin-provisioned: real disk usage follows the
-actual library size, not the request.
+```yaml
+numberOfReplicas: "1"
+nodeSelector: "media"     # Longhorn node tag, only on k8s-wk-01
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+```
 
-Measured on this cluster (two nodes, `longhorn` disk path `/var/lib/longhorn`):
+So the library and every config volume live on `k8s-wk-01` only: 200Gi requested
+for `media-data` is 200Gi of raw capacity, not 2 × 200Gi. The tag is a
+prerequisite and is not in Git (the `Node` CR belongs to longhorn-manager):
 
-| Node | Disk | Reserved | Already scheduled |
-| --- | --- | --- | --- |
-| k8s-cp-01 | 930Gi | 180Gi | 429Gi |
-| k8s-wk-01 | 933Gi | 180Gi | 429Gi |
+```bash
+kubectl -n longhorn-system patch nodes.longhorn.io k8s-wk-01 \
+  --type merge -p '{"spec":{"tags":["media"]}}'
+```
 
-Each node can schedule roughly `930 − 180 = 750Gi` of replicas. After
-media-stack, both nodes sit near 629Gi scheduled, leaving about 120Gi per node
-for future volumes.
+Without the tag, new volumes stay `Pending` with no obvious reason.
 
-If that headroom is too thin, set `numberOfReplicas: "1"` on the class: media is
-re-downloadable, unlike the photo library. Config volumes on the same class keep
-`Retain` — the platform default `longhorn` class uses `Delete`, so this class is
-deliberately separate rather than reusing it.
+The trade-off is real: one copy means losing the worker makes the library and the
+config volumes unavailable until it returns. Media is re-downloadable; the config
+PVCs (SQLite databases, Jellyfin metadata, API keys) are not — back those up.
+
+## Ingress and DNS
+
+The apps are exposed through the existing Envoy Gateway and wildcard
+certificate. The hostnames are also added to Pi-hole's `custom.list`
+(`gitops/applications/pihole/local-dns-cm.yaml`).
+
+That ConfigMap is mounted with `subPath`, and `subPath` mounts never refresh in
+place: after changing the DNS entries, restart Pi-hole or the running pod keeps
+serving the old file.
+
+```bash
+kubectl -n pihole rollout restart deploy/pihole
+```
 
 ## First boot
 
-1. Sync the `media-stack` Application in Argo CD (`media` namespace is created
-   automatically).
-2. Grab the temporary qBittorrent password:
+The apps persist their state on the config PVCs, so a pod restart or an image
+bump keeps every setting. Initial configuration, in order:
+
+1. Sync the `media-stack` Application in Argo CD (`media` is created for you).
+2. qBittorrent — grab the temporary password, log in, change it, then set
+   **Tools → Options → Downloads → Default Save Path** to `/data/torrents`:
 
    ```bash
    kubectl -n media logs deploy/qbittorrent | grep -i 'temporary password'
    ```
 
-   Log in at `https://qbittorrent.home`, change it, then set
-   **Tools → Options → Downloads → Default Save Path** to `/data/torrents`.
-3. Sonarr (`https://sonarr.home`):
-   - Root folder: `/data/media/series`
-   - Download client: qBittorrent, host `qbittorrent`, port `8080`
-   - Indexers: Torznab feeds from Jackett (`http://jackett:9117`)
-   - Indexer proxy: FlareSolverr at `http://flaresolverr:8191/`
-4. Radarr (`https://radarr.home`): same, root folder `/data/media/movies`.
-5. Bazarr (`https://bazarr.home`): connect Sonarr and Radarr with their API
-   keys, folder mapping `/data/media`.
-6. Jellyfin (`https://jellyfin.home`): add libraries at `/data/media/movies`,
-   `/data/media/series` and `/data/media/music`.
-7. Seerr (`https://seerr.home`): connect Jellyfin plus Sonarr/Radarr.
-8. Wizarr (`https://wizarr.home`): create invitation links.
-
-The apps persist their state on the config PVCs, so a pod restart or an image
-bump keeps every setting.
-
-## Migrating existing data
-
-The Compose stack stored app state in `./config` and media in `./data`. Each app
-maps 1:1 onto a config PVC, so migration is a copy per app:
-
-```bash
-# 1. Stop the app so nothing writes to its config volume
-kubectl -n media scale deploy/sonarr --replicas=0
-
-# 2. Start a throwaway pod that mounts the same PVC
-kubectl -n media run pvc-loader --restart=Never --image=alpine \
-  --overrides='{"spec":{"containers":[{"name":"pvc-loader","image":"alpine","command":["sleep","3600"],"volumeMounts":[{"name":"config","mountPath":"/config"}]}],"volumes":[{"name":"config","persistentVolumeClaim":{"claimName":"sonarr-config"}}]}}'
-
-# 3. Copy the old settings in, then clean up
-kubectl -n media cp ./config/sonarr/. pvc-loader:/config
-kubectl -n media delete pod pvc-loader
-
-# 4. Bring the app back
-kubectl -n media scale deploy/sonarr --replicas=1
-```
-
-| Compose directory | PVC |
-| --- | --- |
-| `config/sonarr` | `sonarr-config` |
-| `config/radarr` | `radarr-config` |
-| `config/bazarr` | `bazarr-config` |
-| `config/jackett` | `jackett-config` |
-| `config/qbittorrent` | `qbittorrent-config` |
-| `config/jellyfin` | `jellyfin-config` |
-| `config/seerr` (or `jellyseerr`) | `seerr-config` |
-| `config/wizarr` | `wizarr-config` |
-| `data/torrents`, `data/media` | `media-data` (`torrents/`, `media/`) |
-
-For the library, copy into the `media-data` volume with the same throwaway-pod
-technique, or rsync it over NFS from the old host. Keep the originals until the
-apps come up with their old settings.
+3. Sonarr — root folder `/data/media/series`; download client qBittorrent at
+   `qbittorrent:8080`; indexers from Jackett at `http://jackett:9117`; indexer
+   proxy FlareSolverr at `http://flaresolverr:8191/`.
+4. Radarr — same, root folder `/data/media/movies`.
+5. Bazarr — connect Sonarr and Radarr with their API keys, folder mapping
+   `/data/media`.
+6. Jellyfin — add libraries at `/data/media/movies`, `/data/media/series` and
+   `/data/media/music`.
+7. Seerr — connect Jellyfin plus Sonarr/Radarr.
+8. Wizarr — create invitation links.
 
 ## Operations
 
@@ -206,8 +156,6 @@ apps come up with their old settings.
   are `ReadWriteOnce`. Expect a few seconds of downtime per app on update.
 - Resources are initial guesses, not measurements. Tune them from the
   kube-prometheus-stack data once the stack has run for a while.
-- P2P inbound is not exposed. The torrent port (`6881`) is only inside the
-  cluster. If you want peers to dial in, add a `LoadBalancer` Service for that
-  port with an address from the MetalLB pool.
-- Backups: the config PVCs hold the databases and API keys. The media volume is
-  the only copy of the library unless you back it up too.
+- P2P inbound is not exposed: the torrent port (`6881`) is only inside the
+  cluster. To let peers dial in, add a `LoadBalancer` Service for that port with
+  an address from the MetalLB pool.
