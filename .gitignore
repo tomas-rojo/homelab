@@ -1,3 +1,9 @@
 # Terraform
 .terraform/
 *.tfstate.*
+
+# Kustomize helm chart cache (created locally by `kustomize build --enable-helm`)
+gitops/**/charts/
+
+# Local git worktrees
+worktrees/
