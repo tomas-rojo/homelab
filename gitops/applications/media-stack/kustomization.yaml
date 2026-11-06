@@ -6,6 +6,7 @@ namespace: media
 resources:
   - pvcs.yaml
   - http-routes.yaml
+  - ts-service.yaml
 
 # One Argo CD Application renders this whole stack. Every service is its own
 # Helm release so each keeps its own Deployment, Service and values file, but
