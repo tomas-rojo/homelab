@@ -1,6 +1,9 @@
 topologyInjector:
   enabled: false # Disabled because initial certgen job was failing
 
+crds:
+  enabled: false
+
 # Control plane. Peak working set 75Mi over 10d; chart default requests 256Mi.
 # CPU request left at the chart default of 100m (memory-only rightsizing).
 deployment:
