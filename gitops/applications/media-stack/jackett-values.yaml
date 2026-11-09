@@ -16,7 +16,7 @@ controllers:
       main:
         image:
           repository: lscr.io/linuxserver/jackett
-          tag: 0.24.2900
+          tag: 0.24.3030
         env:
           PUID: "1000"
           PGID: "1000"
