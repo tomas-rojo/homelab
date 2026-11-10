@@ -6,6 +6,11 @@ longhornUI:
 
 defaultSettings:
   defaultReplicaCount: 2
+  # Longhorn default is 12% of node allocatable per instance-manager. Measured
+  # over 14d: 960m requested each, 0.138 / 0.030 cores actually used. 5% gives
+  # 400m each and frees 1.12 cores of reservation. Safe because this cluster
+  # defines no CPU limits, so a request never throttles -- only limits do.
+  guaranteedInstanceManagerCPU: 5
 
 persistence:
   defaultClassReplicaCount: 2

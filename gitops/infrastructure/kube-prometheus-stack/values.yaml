@@ -4,6 +4,48 @@ upgradeJob:
   enabled: true
   forceConflicts: true
 
+# Cardinality audit (14d): 196k active series, 13.4GiB TSDB, 1.9Gi RSS.
+# 76% of those series are control-plane metrics, and k3s serves them from TWO
+# endpoints: the real one (:6443, job="apiserver") and the kubelet one
+# (:10250/metrics, job="kubelet"), which k3s cross-exports. The kubelet copy
+# alone is 90k series (46%) and is also unpruned, since the bucket-pruning
+# defaults only apply to the apiserver ServiceMonitor.
+# NOTE: Helm replace-lists arrays, so these charts' defaults have to be
+# restated here or they are silently lost.
+kubeApiServer:
+  serviceMonitor:
+    metricRelabelings:
+      # Keep this first: chart default that prunes rarely-used latency buckets.
+      - action: drop
+        regex: (etcd_request|apiserver_request_slo|apiserver_request_sli|apiserver_request)_duration_seconds_bucket;(0\.15|0\.2|0\.3|0\.35|0\.4|0\.45|0\.6|0\.7|0\.8|0\.9|1\.25|1\.5|1\.75|2|3|3\.5|4|4\.5|6|7|8|9|15|20|40|45|50)(\.0)?
+        sourceLabels:
+          - __name__
+          - le
+      # Whole histograms nothing here reads. apiserver_request_duration_seconds_bucket
+      # is deliberately NOT listed -- the stock Grafana API server dashboards use it.
+      - action: drop
+        regex: apiserver_request_sli_duration_seconds_bucket|apiserver_request_body_size_bytes_bucket|apiserver_response_sizes_bucket|apiserver_watch_cache_read_wait_seconds_bucket|apiserver_watch_list_duration_seconds_bucket|apiserver_watch_events_sizes_bucket|scheduler_plugin_execution_duration_seconds_bucket
+        sourceLabels:
+          - __name__
+
+kubelet:
+  serviceMonitor:
+    metricRelabelings:
+      # Chart default: prune kubelet storage operation buckets.
+      - action: drop
+        regex: (csi_operations|storage_operation_duration)_seconds_bucket;(0.25|2.5|15|25|120|600)(\.0)?
+        sourceLabels:
+          - __name__
+          - le
+      # Control-plane metrics cross-exported by k3s on the kubelet port. The
+      # authoritative copies arrive from job="apiserver"/"etcd"/"scheduler";
+      # keeping both halves them and double-counts every rate() and
+      # histogram_quantile() on the API server dashboards.
+      - action: drop
+        regex: apiserver_.*|etcd_.*|scheduler_.*
+        sourceLabels:
+          - __name__
+
 # Memory requests/limits sized from 10d of in-cluster Prometheus data:
 # request = p95 working set x1.2, limit = peak working set x1.4.
 prometheus:
